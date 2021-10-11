@@ -25,7 +25,7 @@ namespace AzurLaneWikiScrapersConsole
 			{
 				if (args[0] == "--debug")
 				{
-					Console.Write("Attach your debugger and press enter to start!"); ;
+					Console.Write("Attach your debugger and press enter to start!");
 					Console.ReadLine();
 				}
 			}
