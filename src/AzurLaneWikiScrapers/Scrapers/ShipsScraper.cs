@@ -1,5 +1,7 @@
 using System;
+using System.Net;
 using AzurLaneWikiScrapers.Models;
+using HtmlAgilityPack;
 
 namespace AzurLaneWikiScrapers.Scrapers
 {
@@ -12,7 +14,45 @@ namespace AzurLaneWikiScrapers.Scrapers
 		/// <returns><see cref="AzurLaneShip"/></returns>
 		public AzurLaneShip Execute(string shipUrl)
 		{
-			throw new NotImplementedException();
+			HtmlDocument htmlDoc = new HtmlDocument();
+			htmlDoc.LoadHtml(new WebClient().DownloadString(shipUrl));
+
+			AzurLaneShip ship = new AzurLaneShip();
+
+
+			#region Get Base Ship Information
+			#endregion
+
+
+			#region Get Ship Stats
+			#endregion
+
+
+			#region Get Ship Skins
+			#endregion
+
+
+			#region Get Ship Limit Breaks
+			#endregion
+
+
+			#region Get Ship Skills 
+			#endregion
+
+
+			#region Get Ship Gear
+			#endregion
+
+
+			#region Get Ship Gallery
+			#endregion
+
+
+			#region Get Ship Quotes
+			#endregion
+
+
+			return ship;
 		}
 	}
 }
