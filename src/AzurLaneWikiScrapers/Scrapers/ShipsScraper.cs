@@ -38,6 +38,9 @@ namespace AzurLaneWikiScrapers.Scrapers
 			// Get ship name
 			ship.Name = htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\"firstHeading\"]").InnerText;
 
+			// Get thumbnail ur; 
+			ship.ThumbnailUrl = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/img", shipHasNote).Attributes["src"].Value.Replace("\n", "").Replace(" ", "");
+
 			// Get a ships construction time
 			HtmlNode constructionTimeNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[1]/td[1]", shipHasNote);
 			string constructionTimeNodeText = constructionTimeNode.InnerText.Replace("\n", "");
