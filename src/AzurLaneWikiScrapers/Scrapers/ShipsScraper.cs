@@ -283,6 +283,12 @@ namespace AzurLaneWikiScrapers.Scrapers
 			#region Get Ship Quotes
 			#endregion
 
+			#region Get ship enhance values
+			#endregion
+
+			#region Get ship scrap values
+			#endregion
+
 
 			return ship;
 		}
