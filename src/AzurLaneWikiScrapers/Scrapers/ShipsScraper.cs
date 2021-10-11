@@ -21,6 +21,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 			HtmlDocument htmlDoc = new HtmlDocument();
 			htmlDoc.LoadHtml(new WebClient().DownloadString($"https://azurlane.koumakan.jp/w/index.php?title={shipSource.Url.Split('/').Last()}&mobileaction=toggle_view_desktop"));
 
+			HtmlDocument galleryHtmlDoc = new HtmlDocument();
+			galleryHtmlDoc.LoadHtml(new WebClient().DownloadString(shipSource.Url + "/Gallery"));
+
+
 			AzurLaneShip ship = new AzurLaneShip();
 			bool shipHasNote = false;
 
@@ -127,10 +131,9 @@ namespace AzurLaneWikiScrapers.Scrapers
 
 			#region Get Ship Skins
 			List<AzurLaneShipSkin> skins = new List<AzurLaneShipSkin>();
-			HtmlDocument skinHtmlDoc = new HtmlDocument();
-			skinHtmlDoc.LoadHtml(new WebClient().DownloadString(shipSource.Url + "/Gallery"));
 
-			HtmlNode tabberNode = skinHtmlDoc.DocumentNode.Descendants().First(n => n.HasClass("tabber"));
+
+			HtmlNode tabberNode = galleryHtmlDoc.DocumentNode.Descendants().First(n => n.HasClass("tabber"));
 
 			foreach (HtmlNode tab in tabberNode.ChildNodes.Where(n => n.Name == "div"))
 			{
@@ -166,6 +169,36 @@ namespace AzurLaneWikiScrapers.Scrapers
 			ship.Skins = skins.ToArray();
 			#endregion
 
+			#region Get Ship Gallery
+			List<AzurLaneShipGalleryItem> galleryItems = new List<AzurLaneShipGalleryItem>();
+
+			try
+			{
+				HtmlNode artWorkgalleryNode = galleryHtmlDoc.DocumentNode.SelectSingleNode("/html/body/div[3]/div[3]/div[5]/div[1]/div[3]");
+				if (artWorkgalleryNode != null)
+				{
+					HtmlNode[] artWorkFrameNodes = artWorkgalleryNode.ChildNodes.Where(n => n.Name == "div").ToArray();
+
+					foreach (var artworkFrameNode in artWorkFrameNodes)
+					{
+						AzurLaneShipGalleryItem item = new AzurLaneShipGalleryItem();
+
+						HtmlNode imageNode = artworkFrameNode.Descendants("img").First();
+						HtmlNode descriptionNode = artworkFrameNode.Descendants("div").Skip(1).First();
+
+						item.Description = descriptionNode.InnerText;
+
+						String[] urlParts = imageNode.Attributes["src"].Value.Replace("thumb/", "").Split('/');
+						item.Url = String.Join('/', urlParts.Take(urlParts.Count() - 1));
+
+						galleryItems.Add(item);
+					}
+				}
+			}
+			catch { }
+			ship.GalleryItems = galleryItems.ToArray();
+			#endregion
+
 
 			#region Get Ship Limit Breaks
 			#endregion
@@ -179,8 +212,7 @@ namespace AzurLaneWikiScrapers.Scrapers
 			#endregion
 
 
-			#region Get Ship Gallery
-			#endregion
+
 
 
 			#region Get Ship Quotes
