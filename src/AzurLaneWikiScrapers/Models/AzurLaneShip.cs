@@ -32,10 +32,10 @@ namespace AzurLaneWikiScrapers.Models
 		public AzurLaneShipScrapValues ScrapValues { get; set; }
 		public AzurLaneShipConstructionValues ConstructionValues { get; set; }
 
-		public AzurLaneMiscItem Artist { get; set; }
-		public AzurLaneMiscItem Pixiv { get; set; }
-		public AzurLaneMiscItem Twitter { get; set; }
-		public AzurLaneMiscItem Web { get; set; }
-		public AzurLaneMiscItem VoiceActor { get; set; }
+		public string Artist { get; set; }
+		public string Pixiv { get; set; }
+		public string Twitter { get; set; }
+		public string Web { get; set; }
+		public string VoiceActor { get; set; }
 	}
 }

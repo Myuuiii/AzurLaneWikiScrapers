@@ -200,6 +200,36 @@ namespace AzurLaneWikiScrapers.Scrapers
 			#endregion
 
 
+			#region Get Ship Misc Info
+			HtmlNode miscInfoNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[2]/td[2]", shipHasNote);
+			HtmlNode[] anchorNodes = miscInfoNode.ChildNodes.Where(n => n.Name == "a").ToArray();
+			foreach (HtmlNode anchorNode in anchorNodes)
+			{
+				if (anchorNode.Attributes["href"].Value.StartsWith("/Artists"))
+					ship.Artist = anchorNode.InnerText.Replace("\n", "");
+
+				if (anchorNode.Attributes.Contains("title"))
+				{
+					if (anchorNode.Attributes["title"].Value == "Pixiv")
+					{
+						ship.Pixiv = anchorNode.Attributes["href"].Value;
+					}
+					else if (anchorNode.Attributes["title"].Value == "Twitter")
+					{
+						ship.Twitter = anchorNode.Attributes["href"].Value;
+					}
+				}
+				else
+				{
+					ship.Web = anchorNode.Attributes["href"].Value;
+				}
+			}
+
+			HtmlNode voiceActorNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[1]/td[2]", shipHasNote);
+			ship.VoiceActor = voiceActorNode.InnerText.Replace("\n", "").Trim();
+			#endregion
+
+
 			#region Get Ship Limit Breaks
 			#endregion
 
@@ -210,10 +240,6 @@ namespace AzurLaneWikiScrapers.Scrapers
 
 			#region Get Ship Gear
 			#endregion
-
-
-
-
 
 			#region Get Ship Quotes
 			#endregion
