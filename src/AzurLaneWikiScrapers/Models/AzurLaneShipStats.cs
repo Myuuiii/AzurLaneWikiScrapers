@@ -1,9 +1,11 @@
+using AzurLaneWikiScrapers.Enums;
+
 namespace AzurLaneWikiScrapers.Models
 {
 	public class AzurLaneShipStats
 	{
 		public int Luck { get; set; }
-		public string Armor { get; set; }
+		public AzurLaneArmor Armor { get; set; }
 		public int Speed { get; set; }
 		public int Health { get; set; }
 		public int Firepower { get; set; }

@@ -3,17 +3,17 @@ namespace AzurLaneWikiScrapers.Enums
 	public enum AzurLaneHull
 	{
 		AircraftCarrier,
-		BattleCruiser,
-		BattleShip,
+		Battlecruiser,
+		Battleship,
 		Destroyer,
 		HeavyCruiser,
 		LightAircraftCarrier,
 		LightCruiser,
 		Monitor,
-		Munition,
-		Repair,
+		MunitionShip,
+		RepairShip,
 		Submarine,
-		SubmarineAircraftCarrier,
-		SuperCruiser
+		SubmarineCarrier,
+		LargeCruiser
 	}
 }

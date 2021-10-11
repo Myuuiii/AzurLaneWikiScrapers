@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using AzurLaneWikiScrapers.Models;
 using HtmlAgilityPack;
 
 namespace AzurLaneWikiScrapers.Scrapers
@@ -12,10 +13,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 		/// Retrieve all the ship urls
 		/// </summary>
 		/// <returns><see cref="string[]" /></returns>
-		public string[] Execute()
+		public AzurLaneShipSource[] Execute()
 		{
 			// This is the list that we will return later converted to a string[]
-			List<String> urls = new List<String>();
+			List<AzurLaneShipSource> sources = new List<AzurLaneShipSource>();
 
 			// Download the HTML contents of the overview page
 			String shipsListPageContents = new WebClient().DownloadString("https://azurlane.koumakan.jp/List_of_Ships");
@@ -33,15 +34,18 @@ namespace AzurLaneWikiScrapers.Scrapers
 				{
 					foreach (var trNode in tbodyNode.Descendants("tr").Skip(1))
 					{
+						AzurLaneShipSource source = new AzurLaneShipSource();
 						HtmlNode td = trNode.Descendants("td").First();
 						HtmlNode a = td.Descendants("a").First();
 						String anchorAttributeValue = a.Attributes["href"].Value;
-						urls.Add("https://azurlane.koumakan.jp" + anchorAttributeValue);
+						source.Url = "https://azurlane.koumakan.jp" + anchorAttributeValue;
+						source.ShipId = a.InnerText.Replace("\n", "");
+						sources.Add(source);
 					}
 				}
 			}
 
-			return urls.ToArray();
+			return sources.ToArray();
 		}
 	}
 }
