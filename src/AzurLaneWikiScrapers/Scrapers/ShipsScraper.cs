@@ -126,6 +126,44 @@ namespace AzurLaneWikiScrapers.Scrapers
 
 
 			#region Get Ship Skins
+			List<AzurLaneShipSkin> skins = new List<AzurLaneShipSkin>();
+			HtmlDocument skinHtmlDoc = new HtmlDocument();
+			skinHtmlDoc.LoadHtml(new WebClient().DownloadString(shipSource.Url + "/Gallery"));
+
+			HtmlNode tabberNode = skinHtmlDoc.DocumentNode.Descendants().First(n => n.HasClass("tabber"));
+
+			foreach (HtmlNode tab in tabberNode.ChildNodes.Where(n => n.Name == "div"))
+			{
+				AzurLaneShipSkin skin = new AzurLaneShipSkin();
+				HtmlNode[] skinImageDescendants = tab.Descendants("img").ToArray();
+
+				skin.Name = tab.Attributes["title"].Value.Replace("\n", "");
+				switch (skinImageDescendants.Count())
+				{
+					case 1:
+						skin.ImageUrl = skinImageDescendants[0].Attributes["src"].Value;
+						break;
+					case 2:
+						skin.ImageUrl = skinImageDescendants[0].Attributes["src"].Value;
+						skin.BackgroundUrl = skinImageDescendants[1].Attributes["src"].Value;
+						break;
+					case 3:
+					default:
+						skin.ChibiUrl = skinImageDescendants[0].Attributes["src"].Value;
+						skin.ImageUrl = skinImageDescendants[1].Attributes["src"].Value;
+						skin.BackgroundUrl = skinImageDescendants[2].Attributes["src"].Value;
+						break;
+				}
+
+				HtmlNode skintableDescendants = tab.Descendants("table").First();
+				HtmlNode[] tablevalues = skintableDescendants.Descendants("td").ToArray();
+
+				skin.ObtainedFrom = tablevalues[0].InnerText;
+				if (tablevalues[1].InnerHtml == "Yes") skin.IsLive2D = true;
+
+				skins.Add(skin);
+			}
+			ship.Skins = skins.ToArray();
 			#endregion
 
 
