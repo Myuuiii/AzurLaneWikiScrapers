@@ -15,7 +15,7 @@ namespace AzurLaneWikiScrapers.Models
 		public string ThumbnailUrl { get; set; }
 		public AzurLaneShipSkin[] Skins { get; set; }
 		public AzurLaneShipSkill[] Skills { get; set; }
-		public string[] LimitBreaks { get; set; }
+		public AzurLaneShipLimitBreak[] LimitBreaks { get; set; }
 		public AzurLaneShipGalleryItem[] GalleryItems { get; set; }
 		public AzurLaneShipEquippableSlot[] EquippableSlots { get; set; }
 		public AzurLaneShipQuote[] Quotes { get; set; }

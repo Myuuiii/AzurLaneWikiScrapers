@@ -5,10 +5,10 @@ namespace AzurLaneWikiScrapers.Models
 	public class AzurLaneShipConstructionValues
 	{
 		public TimeSpan ConstructionTime { get; set; }
-		public string LightAvailability { get; set; }
-		public string HeavyAvailability { get; set; }
-		public string SpecialAvailability { get; set; }
-		public string LimitedAvailability { get; set; }
-		public string Exchange { get; set; }
+		public bool LightAvailable { get; set; }
+		public bool HeavyAvailable { get; set; }
+		public bool SpecialAvailable { get; set; }
+		public bool LimitedAvailable { get; set; }
+		public bool Exchange { get; set; }
 	}
 }

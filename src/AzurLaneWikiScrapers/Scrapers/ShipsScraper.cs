@@ -45,7 +45,7 @@ namespace AzurLaneWikiScrapers.Scrapers
 			// Get thumbnail ur; 
 			ship.ThumbnailUrl = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/img", shipHasNote).Attributes["src"].Value.Replace("\n", "").Replace(" ", "");
 
-			// Get a ships construction time
+			// Get a ships construction values
 			HtmlNode constructionTimeNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[1]/td[1]", shipHasNote);
 			string constructionTimeNodeText = constructionTimeNode.InnerText.Replace("\n", "");
 			string[] constructText = null;
@@ -55,6 +55,15 @@ namespace AzurLaneWikiScrapers.Scrapers
 				constructText = constructionTimeNode.InnerText.Replace("\n", "").Split(':');
 				ship.ConstructionValues.ConstructionTime = new TimeSpan(Convert.ToInt32(constructText[0]), Convert.ToInt32(constructText[1]), Convert.ToInt32(constructText[2]));
 			}
+			if (Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[2]/table/tbody/tr[4]/td[1]", shipHasNote) != null)
+			{
+				ship.ConstructionValues.LightAvailable = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[2]/table/tbody/tr[4]/td[1]", shipHasNote).InnerText.Replace("\n", "").Contains("✓");
+				ship.ConstructionValues.HeavyAvailable = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[2]/table/tbody/tr[4]/td[2]", shipHasNote).InnerText.Replace("\n", "").Contains("✓");
+				ship.ConstructionValues.SpecialAvailable = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[2]/table/tbody/tr[4]/td[3]", shipHasNote).InnerText.Replace("\n", "").Contains("✓");
+				ship.ConstructionValues.LimitedAvailable = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[2]/table/tbody/tr[4]/td[4]", shipHasNote).InnerText.Replace("\n", "").Contains("✓");
+				ship.ConstructionValues.Exchange = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[2]/table/tbody/tr[4]/td[5]", shipHasNote).InnerText.Replace("\n", "").Contains("✓");
+			}
+
 
 			// Get ship rarity and stars
 			HtmlNode rarityNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[2]/td[1]", shipHasNote);
@@ -226,15 +235,45 @@ namespace AzurLaneWikiScrapers.Scrapers
 			}
 
 			HtmlNode voiceActorNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[1]/td[2]", shipHasNote);
-			ship.VoiceActor = voiceActorNode.InnerText.Replace("\n", "").Trim();
+			ship.VoiceActor = voiceActorNode.InnerText.Replace("\n", "").Replace("Play", "").Trim();
 			#endregion
 
 
-			#region Get Ship Limit Breaks
-			#endregion
+			#region Get Ship Limit Breaks & Skills
+			HtmlNode limitBreakSkillNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/table", shipHasNote);
+			HtmlNode[] limitBreakSkillRows = limitBreakSkillNode.Descendants("tr").Skip(1).ToArray();
 
 
-			#region Get Ship Skills 
+			List<AzurLaneShipLimitBreak> limitBreaks = new List<AzurLaneShipLimitBreak>();
+			List<AzurLaneShipSkill> skills = new List<AzurLaneShipSkill>();
+
+			// First 2 columns are limit breaks
+			// Other 3 columns are skills
+			foreach (HtmlNode limitBreakSkillRow in limitBreakSkillRows)
+			{
+				HtmlNode[] limitBreakSkillRowColumns = limitBreakSkillRow.Descendants("td").ToArray();
+
+				if (!string.IsNullOrWhiteSpace(limitBreakSkillRowColumns[0].InnerText.Replace("\n", "").Trim()))
+				{
+					AzurLaneShipLimitBreak limitBreak = new AzurLaneShipLimitBreak();
+					limitBreak.Level = limitBreaks.Count + 1;
+					limitBreak.Info = limitBreakSkillRowColumns[0].InnerText.Replace("\n", "").Trim();
+					limitBreaks.Add(limitBreak);
+				}
+
+				if (limitBreakSkillRowColumns[1].Descendants("img").Count() == 1)
+				{
+					// Skill at this level
+					AzurLaneShipSkill skill = new AzurLaneShipSkill();
+					skill.Name = limitBreakSkillRowColumns[2].ChildNodes.First(n => n.Name == "b").InnerText.Replace("\n", "").Trim();
+					skill.Description = limitBreakSkillRowColumns[3].InnerText.Replace("\n", "").Trim();
+					skill.IconUrl = limitBreakSkillRowColumns[1].Descendants("img").First().Attributes["src"].Value;
+					skills.Add(skill);
+				}
+			}
+
+			ship.LimitBreaks = limitBreaks.ToArray();
+			ship.Skills = skills.ToArray();
 			#endregion
 
 
