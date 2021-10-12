@@ -277,7 +277,7 @@ namespace AzurLaneWikiScrapers.Scrapers
 			#endregion
 
 
-			#region Get ship enhance & scrap values
+			#region Get ship enhance values
 			HtmlNode enhanceScrapNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/table[3]/tbody", shipHasNote);
 
 			HtmlNode enhanceValuesNode = enhanceScrapNode.Descendants("td").First();
@@ -289,23 +289,23 @@ namespace AzurLaneWikiScrapers.Scrapers
 				int currentIndex = 0;
 				foreach (HtmlNode enValNode in enhanceValuesImageNodes)
 				{
-					if (enValNode.Attributes["alt"].Value.Contains("Firepower"))
+					switch (enValNode.Attributes["alt"].Value)
 					{
-						ship.EnhanceValues.Firepower = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+						case "Firepower":
+							ship.EnhanceValues.Firepower = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+							break;
+						case "Torpedo":
+							ship.EnhanceValues.Torpedo = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+							break;
+						case "Aviation":
+							ship.EnhanceValues.Aviation = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+							break;
+						case "Reload":
+							ship.EnhanceValues.Reload = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+							break;
+						default:
+							throw new Exception("A new enhance value was found, please notify the developers of the application");
 					}
-					else if (enValNode.Attributes["alt"].Value.Contains("Torpedo"))
-					{
-						ship.EnhanceValues.Torpedo = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
-					}
-					else if (enValNode.Attributes["alt"].Value.Contains("Aviation"))
-					{
-						ship.EnhanceValues.Aviation = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
-					}
-					else if (enValNode.Attributes["alt"].Value.Contains("Reload"))
-					{
-						ship.EnhanceValues.Reload = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
-					}
-
 					currentIndex++;
 				}
 			}
@@ -313,6 +313,34 @@ namespace AzurLaneWikiScrapers.Scrapers
 			#endregion
 
 			#region Get ship scrap values
+			ship.ScrapValues = new AzurLaneShipScrapValues();
+			HtmlNode scrapValuesNode = enhanceScrapNode.Descendants("td").Skip(1).First();
+			HtmlNode[] scrapValuesImageNodes = scrapValuesNode.Descendants("img").ToArray();
+			rawTextNodes = scrapValuesNode.Descendants("#text").Where(n => !n.InnerText.Contains("\n")).ToArray();
+			{
+				int currentIndex = 0;
+				foreach (HtmlNode scValNode in scrapValuesImageNodes)
+				{
+					switch (scValNode.Attributes["alt"].Value)
+					{
+						case "Coin":
+							ship.ScrapValues.Coins = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+							break;
+						case "Medal":
+							ship.ScrapValues.Medals = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+							break;
+						case "Oil":
+							ship.ScrapValues.Oil = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+							break;
+						case "Specialized Core":
+							ship.ScrapValues.SpecializedCore = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+							break;
+						default:
+							throw new Exception("A new scrap value was found, please notify the developers of the application");
+					}
+					currentIndex++;
+				}
+			}
 			#endregion
 
 			#region Get Ship Gear
