@@ -411,6 +411,41 @@ namespace AzurLaneWikiScrapers.Scrapers
 			#endregion
 
 			#region Get Ship Gear
+			HtmlNode gearTable = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/table[1]/tbody", shipHasNote);
+
+			// SKip 2 rows to skip the table name and the column name rows
+			HtmlNode[] gearTableRows = gearTable.ChildNodes.Where(n => n.OriginalName == "tr").Skip(2).ToArray();
+
+			List<AzurLaneShipEquippableSlot> gear = new List<AzurLaneShipEquippableSlot>();
+			foreach (HtmlNode row in gearTableRows)
+			{
+				HtmlNode[] cells = row.ChildNodes.Where(n => n.OriginalName == "td").ToArray();
+				AzurLaneShipEquippableSlot slot = new AzurLaneShipEquippableSlot();
+				slot.Slot = Convert.ToInt32(cells[0].InnerText.Trim());
+				if (cells[1].InnerText.Replace("%", "").Trim() != "None")
+				{
+					if (cells[1].InnerText.Replace("%", "").Trim().Split("→").Count() == 2)
+					{
+						if (int.TryParse(cells[1].InnerText.Replace("%", "").Trim().Split("→")[0], out int _))
+							slot.MinEfficiency = Convert.ToInt32(cells[1].InnerText.Replace("%", "").Trim().Split("→")[0]);
+						if (int.TryParse(cells[1].InnerText.Replace("%", "").Trim().Split("→")[1], out int _))
+							slot.MaxEfficiency = Convert.ToInt32(cells[1].InnerText.Replace("%", "").Trim().Split("→")[1]);
+					}
+				}
+
+				slot.Type = cells[2].InnerText.Trim();
+
+				if (int.TryParse(cells[3].InnerText.Trim().Split(' ')[0], out int _))
+					slot.Max = Convert.ToInt32(cells[3].InnerText.Trim().Split(' ')[0]);
+
+				if (cells[3].InnerText.Trim().Split(' ').Length > 1)
+				{
+					string content = cells[3].InnerText.Trim().Split(' ').Last();
+					slot.MaxRetrofit = Convert.ToInt32(content);
+				}
+				gear.Add(slot);
+			}
+			ship.EquippableSlots = gear.ToArray();
 			#endregion
 
 			return ship;
