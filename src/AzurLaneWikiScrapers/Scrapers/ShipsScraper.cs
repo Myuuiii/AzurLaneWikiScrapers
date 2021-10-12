@@ -24,6 +24,9 @@ namespace AzurLaneWikiScrapers.Scrapers
 			HtmlDocument galleryHtmlDoc = new HtmlDocument();
 			galleryHtmlDoc.LoadHtml(new WebClient().DownloadString(shipSource.Url + "/Gallery"));
 
+			HtmlDocument quotesHtmlDoc = new HtmlDocument();
+			quotesHtmlDoc.LoadHtml(new WebClient().DownloadString(shipSource.Url + "/Quotes"));
+
 
 			AzurLaneShip ship = new AzurLaneShip();
 			bool shipHasNote = false;
@@ -342,13 +345,153 @@ namespace AzurLaneWikiScrapers.Scrapers
 			}
 			#endregion
 
+			#region Get Ship Quotes
+			HtmlNode tabber = quotesHtmlDoc.DocumentNode.Descendants().Where(n => n.HasClass("tabber")).First();
+			HtmlNode englishServer, chineseServer, japaneseServer;
+			englishServer = chineseServer = japaneseServer = null;
+
+			List<AzurLaneShipQuote> quotes = new List<AzurLaneShipQuote>();
+
+			if (tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "english server").Count() > 0)
+			{
+				englishServer = tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "english server").First();
+			}
+			if (tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "chinese server").Count() > 0)
+			{
+				chineseServer = tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "chinese server").First();
+			}
+			if (tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "japanese server").Count() > 0)
+			{
+				japaneseServer = tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "japanese server").First();
+			}
+
+
+			// English Server Quote Loops
+			if (englishServer != null)
+			{
+				IEnumerable<HtmlNode> enTables = englishServer.ChildNodes.Where(n => n.OriginalName == "table");
+				for (int tableNr = 0; tableNr < enTables.Count(); tableNr++)
+				{
+					foreach (HtmlNode table in enTables)
+					{
+						quotes = ProcessQuotesTable(quotes, table, englishServer.ChildNodes.Where(n => n.OriginalName == "h3").ToArray()[tableNr].InnerText, "EN");
+					}
+				}
+			}
+
+
+			// Chinese Server Quote Loops
+			if (chineseServer != null)
+			{
+				IEnumerable<HtmlNode> cnTables = chineseServer.ChildNodes.Where(n => n.OriginalName == "table");
+				for (int tableNr = 0; tableNr < cnTables.Count(); tableNr++)
+				{
+					foreach (HtmlNode table in cnTables)
+					{
+						quotes = ProcessQuotesTable(quotes, table, chineseServer.ChildNodes.Where(n => n.OriginalName == "h3").ToArray()[tableNr].InnerText, "CN");
+					}
+				}
+
+			}
+
+
+			// Japanese Server Quote Loops
+			if (japaneseServer != null)
+			{
+				IEnumerable<HtmlNode> jpTables = japaneseServer.ChildNodes.Where(n => n.OriginalName == "table");
+				for (int tableNr = 0; tableNr < jpTables.Count(); tableNr++)
+				{
+					foreach (HtmlNode table in jpTables)
+					{
+						quotes = ProcessQuotesTable(quotes, table, japaneseServer.ChildNodes.Where(n => n.OriginalName == "h3").ToArray()[tableNr].InnerText, "JP");
+					}
+				}
+			}
+			ship.Quotes = quotes.ToArray();
+			#endregion
+
 			#region Get Ship Gear
 			#endregion
 
-			#region Get Ship Quotes
-			#endregion
-
 			return ship;
+		}
+
+		/// <summary>
+		/// Get all the ship's quotes
+		/// </summary>
+		private static List<AzurLaneShipQuote> ProcessQuotesTable(List<AzurLaneShipQuote> quotes, HtmlNode tableNode, String skinName, String language)
+		{
+			// Skip the first TR as it contains the headers
+			if (tableNode.Descendants("tr").Count() > 1)
+			{
+				HtmlNode[] rows = tableNode.Descendants("tr").ToArray();
+				for (int rowNr = 1; rowNr < rows.Count(); rowNr++)
+				{
+
+					AzurLaneShipQuote quote = new AzurLaneShipQuote();
+					HtmlNode[] nodeColumns = rows[rowNr].ChildNodes.Where(n => n.OriginalName == "td").ToArray();
+					nodeColumns.Last().InnerHtml = "";
+
+					if (quotes.Any(q => q.Event == nodeColumns[0].InnerText.Replace("\n", "")))
+					{
+						quote = quotes.Single(q => q.Event == nodeColumns[0].InnerText.Replace("\n", ""));
+					}
+					else
+					{
+						quote = new AzurLaneShipQuote();
+						quote.Skin = skinName;
+					}
+
+					quote.Event = nodeColumns[0].InnerText.Replace("\n", "");
+
+					if (nodeColumns.Count() == 4)
+					{
+						// English Table
+						quote.EnTranscription = nodeColumns[2].InnerText.Replace("\n", "");
+
+						if (nodeColumns[3].ChildNodes.Where(n => n.OriginalName == "a").Count() > 0)
+						{
+							quote.AudioUrl = nodeColumns[1].ChildNodes.Where(n => n.OriginalName == "a").ToArray()[0].Attributes["href"].Value;
+						}
+					}
+					else if (nodeColumns.Count() == 5)
+					{
+						// Japanese or Chinese Table
+						if (language == "JP")
+						{
+							quote.JpTranscription = nodeColumns[2].InnerText.Replace("\n", "");
+						}
+						else if (language == "CN")
+						{
+							quote.CnTranscription = nodeColumns[2].InnerText.Replace("\n", "");
+						}
+						else if (language == "EN")
+						{
+							quote.EnTranscription = nodeColumns[3].InnerText.Replace("\n", "");
+						}
+					}
+					else if (nodeColumns.Count() == 6)
+					{
+						// Chinese Table with chinese audio
+						quote.CnTranscription = nodeColumns[3].InnerText.Replace("\n", "");
+					}
+
+					if (quote.AudioUrl == null)
+					{
+						if (nodeColumns[1].ChildNodes.Where(n => n.OriginalName == "a").Count() > 0)
+						{
+							quote.AudioUrl = nodeColumns[1].ChildNodes.Where(n => n.OriginalName == "a").ToArray()[0].Attributes["href"].Value;
+						}
+					}
+
+					if (!quotes.Any(q => q.Event == quote.Event))
+					{
+						quotes.Add(quote);
+					}
+				}
+			}
+
+			return quotes;
 		}
 	}
 }
