@@ -309,7 +309,6 @@ namespace AzurLaneWikiScrapers.Scrapers
 					currentIndex++;
 				}
 			}
-
 			#endregion
 
 			#region Get ship scrap values
