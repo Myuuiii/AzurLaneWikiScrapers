@@ -479,36 +479,40 @@ namespace AzurLaneWikiScrapers.Scrapers
 
 					quote.Event = nodeColumns[0].InnerText.Replace("\n", "");
 
-					if (nodeColumns.Count() == 4)
+					switch (nodeColumns.Count())
 					{
-						// English Table
-						quote.EnTranscription = nodeColumns[2].InnerText.Replace("\n", "");
+						case 4:
+							{
+								// English Table
+								quote.EnTranscription = nodeColumns[2].InnerText.Replace("\n", "");
 
-						if (nodeColumns[3].ChildNodes.Where(n => n.OriginalName == "a").Count() > 0)
-						{
-							quote.AudioUrl = nodeColumns[1].ChildNodes.Where(n => n.OriginalName == "a").ToArray()[0].Attributes["href"].Value;
-						}
-					}
-					else if (nodeColumns.Count() == 5)
-					{
-						// Japanese or Chinese Table
-						if (language == "JP")
-						{
-							quote.JpTranscription = nodeColumns[2].InnerText.Replace("\n", "");
-						}
-						else if (language == "CN")
-						{
-							quote.CnTranscription = nodeColumns[2].InnerText.Replace("\n", "");
-						}
-						else if (language == "EN")
-						{
-							quote.EnTranscription = nodeColumns[3].InnerText.Replace("\n", "");
-						}
-					}
-					else if (nodeColumns.Count() == 6)
-					{
-						// Chinese Table with chinese audio
-						quote.CnTranscription = nodeColumns[3].InnerText.Replace("\n", "");
+								if (nodeColumns[3].ChildNodes.Where(n => n.OriginalName == "a").Count() > 0)
+								{
+									quote.AudioUrl = nodeColumns[1].ChildNodes.Where(n => n.OriginalName == "a").ToArray()[0].Attributes["href"].Value;
+								}
+
+								break;
+							}
+
+						case 5:
+							// Japanese or Chinese Table
+							if (language == "JP")
+							{
+								quote.JpTranscription = nodeColumns[2].InnerText.Replace("\n", "");
+							}
+							else if (language == "CN")
+							{
+								quote.CnTranscription = nodeColumns[2].InnerText.Replace("\n", "");
+							}
+							else if (language == "EN")
+							{
+								quote.EnTranscription = nodeColumns[3].InnerText.Replace("\n", "");
+							}
+							break;
+						case 6:
+							// Chinese Table with chinese audio
+							quote.CnTranscription = nodeColumns[3].InnerText.Replace("\n", "");
+							break;
 					}
 
 					if (quote.AudioUrl == null)
