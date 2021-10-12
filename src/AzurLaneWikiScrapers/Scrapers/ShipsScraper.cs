@@ -277,18 +277,49 @@ namespace AzurLaneWikiScrapers.Scrapers
 			#endregion
 
 
-			#region Get Ship Gear
-			#endregion
+			#region Get ship enhance & scrap values
+			HtmlNode enhanceScrapNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/table[3]/tbody", shipHasNote);
 
-			#region Get Ship Quotes
-			#endregion
+			HtmlNode enhanceValuesNode = enhanceScrapNode.Descendants("td").First();
+			HtmlNode[] enhanceValuesImageNodes = enhanceValuesNode.Descendants("img").ToArray();
+			HtmlNode[] rawTextNodes = enhanceValuesNode.Descendants("#text").Where(n => !n.InnerText.Contains("\n")).ToArray();
 
-			#region Get ship enhance values
+			ship.EnhanceValues = new AzurLaneShipEnhanceValues();
+			{
+				int currentIndex = 0;
+				foreach (HtmlNode enValNode in enhanceValuesImageNodes)
+				{
+					if (enValNode.Attributes["alt"].Value.Contains("Firepower"))
+					{
+						ship.EnhanceValues.Firepower = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+					}
+					else if (enValNode.Attributes["alt"].Value.Contains("Torpedo"))
+					{
+						ship.EnhanceValues.Torpedo = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+					}
+					else if (enValNode.Attributes["alt"].Value.Contains("Aviation"))
+					{
+						ship.EnhanceValues.Aviation = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+					}
+					else if (enValNode.Attributes["alt"].Value.Contains("Reload"))
+					{
+						ship.EnhanceValues.Reload = Convert.ToInt32(rawTextNodes[currentIndex].InnerText.Trim());
+					}
+
+					currentIndex++;
+				}
+			}
+
 			#endregion
 
 			#region Get ship scrap values
 			#endregion
 
+			#region Get Ship Gear
+			#endregion
+
+			#region Get Ship Quotes
+			#endregion
 
 			return ship;
 		}
