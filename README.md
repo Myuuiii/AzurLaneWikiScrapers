@@ -1,6 +1,8 @@
-<div align="center"> 
+<img src="./.github/RepoBanner.png" />
 
-# Azur Lane Wiki Scraper
-Scrapes the information off of the Azur Lane wiki and exports it to json files
-
-</div>
+# Functions to be implemented before release
+- [x] Download all ship data
+- [ ] Download all ship images
+- [ ] Download all equipment data
+- [ ] Download all equipment images
+- [ ] Download all event data
