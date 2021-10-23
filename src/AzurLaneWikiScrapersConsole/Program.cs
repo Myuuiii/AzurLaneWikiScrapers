@@ -57,6 +57,10 @@ namespace AzurLaneWikiScrapersConsole
 					_downloadShipData = true;
 					_downloadShipUrls = true;
 				}
+				if (args.Contains("--all-nodata"))
+				{
+					_downloadShipImages = true;
+				}
 			}
 
 			#region Export Ship Urls

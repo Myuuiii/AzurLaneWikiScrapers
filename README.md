@@ -7,6 +7,12 @@ Download everything including images
 ## `--all-noimg`
 Download everything except images
 
+## `--all-nodata`
+Download everything except for data
+
+## `--debug`
+Enables a readline before starting the scraper allowing you to attach a debugger
+
 ## `--ships-data`
 Download ships data
 
