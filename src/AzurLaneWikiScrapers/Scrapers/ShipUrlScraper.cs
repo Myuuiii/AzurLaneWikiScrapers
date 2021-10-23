@@ -35,11 +35,9 @@ namespace AzurLaneWikiScrapers.Scrapers
 					foreach (var trNode in tbodyNode.Descendants("tr").Skip(1))
 					{
 						AzurLaneShipSource source = new AzurLaneShipSource();
-						HtmlNode td = trNode.Descendants("td").First();
-						HtmlNode a = td.Descendants("a").First();
-						String anchorAttributeValue = a.Attributes["href"].Value;
-						source.Url = "https://azurlane.koumakan.jp" + anchorAttributeValue;
-						source.ShipId = a.InnerText.Replace("\n", "");
+						source.Url = "https://azurlane.koumakan.jp" + trNode.Descendants("td").First().Descendants("a").First().Attributes["href"].Value;
+						source.ShipId = trNode.Descendants("td").First().Descendants("a").First().InnerText.Replace("\n", "");
+						source.Name = trNode.Descendants("td").Skip(1).First().InnerText.Replace("\n", "");
 						sources.Add(source);
 					}
 				}

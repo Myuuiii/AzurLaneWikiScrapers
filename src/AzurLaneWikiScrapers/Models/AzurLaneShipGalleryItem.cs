@@ -4,5 +4,6 @@ namespace AzurLaneWikiScrapers.Models
 	{
 		public string Description { get; set; }
 		public string Url { get; set; }
+		public string InternalFileName { get; set; }
 	}
 }

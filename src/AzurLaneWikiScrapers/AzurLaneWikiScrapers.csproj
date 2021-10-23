@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
+    <PackageReference Include="Spectre.Console" Version="0.42.0" />
   </ItemGroup>
 
 </Project>

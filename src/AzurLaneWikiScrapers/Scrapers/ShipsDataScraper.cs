@@ -6,10 +6,11 @@ using System.Text.RegularExpressions;
 using AzurLaneWikiScrapers.Enums;
 using AzurLaneWikiScrapers.Models;
 using HtmlAgilityPack;
+using Spectre.Console;
 
 namespace AzurLaneWikiScrapers.Scrapers
 {
-	public class ShipsScraper
+	public class ShipsDataScraper
 	{
 		/// <summary>
 		/// Retrieve a <see cref="AzurLaneShip"/> object
@@ -22,11 +23,18 @@ namespace AzurLaneWikiScrapers.Scrapers
 			htmlDoc.LoadHtml(new WebClient().DownloadString($"https://azurlane.koumakan.jp/w/index.php?title={shipSource.Url.Split('/').Last()}&mobileaction=toggle_view_desktop"));
 
 			HtmlDocument galleryHtmlDoc = new HtmlDocument();
-			galleryHtmlDoc.LoadHtml(new WebClient().DownloadString(shipSource.Url + "/Gallery"));
+			try
+			{
+				galleryHtmlDoc.LoadHtml(new WebClient().DownloadString($"https://azurlane.koumakan.jp/w/index.php?title={shipSource.Url.Split('/').Last()}/Gallery&mobileaction=toggle_view_desktop"));
+			}
+			catch { }
 
 			HtmlDocument quotesHtmlDoc = new HtmlDocument();
-			quotesHtmlDoc.LoadHtml(new WebClient().DownloadString(shipSource.Url + "/Quotes"));
-
+			try
+			{
+				quotesHtmlDoc.LoadHtml(new WebClient().DownloadString($"https://azurlane.koumakan.jp/w/index.php?title={shipSource.Url.Split('/').Last()}/Quotes&mobileaction=toggle_view_desktop"));
+			}
+			catch { }
 
 			AzurLaneShip ship = new AzurLaneShip();
 			bool shipHasNote = false;
@@ -43,7 +51,7 @@ namespace AzurLaneWikiScrapers.Scrapers
 			ship.Id = shipSource.ShipId;
 
 			// Get ship name
-			ship.Name = htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\"firstHeading\"]").InnerText;
+			ship.Name = shipSource.Name;
 
 			// Get thumbnail ur; 
 			ship.ThumbnailUrl = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/img", shipHasNote).Attributes["src"].Value.Replace("\n", "").Replace(" ", "");
@@ -142,73 +150,80 @@ namespace AzurLaneWikiScrapers.Scrapers
 
 
 			#region Get Ship Skins
-			List<AzurLaneShipSkin> skins = new List<AzurLaneShipSkin>();
-
-
-			HtmlNode tabberNode = galleryHtmlDoc.DocumentNode.Descendants().First(n => n.HasClass("tabber"));
-
-			foreach (HtmlNode tab in tabberNode.ChildNodes.Where(n => n.Name == "div"))
+			if (galleryHtmlDoc.DocumentNode.FirstChild != null)
 			{
-				AzurLaneShipSkin skin = new AzurLaneShipSkin();
-				HtmlNode[] skinImageDescendants = tab.Descendants("img").ToArray();
+				List<AzurLaneShipSkin> skins = new List<AzurLaneShipSkin>();
 
-				skin.Name = tab.Attributes["title"].Value.Replace("\n", "");
-				switch (skinImageDescendants.Count())
+				HtmlNode tabberNode = galleryHtmlDoc.DocumentNode.Descendants().First(n => n.HasClass("tabber"));
+
+				foreach (HtmlNode tab in tabberNode.ChildNodes.Where(n => n.Name == "div"))
 				{
-					case 1:
-						skin.ImageUrl = skinImageDescendants[0].Attributes["src"].Value;
-						break;
-					case 2:
-						skin.ImageUrl = skinImageDescendants[0].Attributes["src"].Value;
-						skin.BackgroundUrl = skinImageDescendants[1].Attributes["src"].Value;
-						break;
-					case 3:
-					default:
-						skin.ChibiUrl = skinImageDescendants[0].Attributes["src"].Value;
-						skin.ImageUrl = skinImageDescendants[1].Attributes["src"].Value;
-						skin.BackgroundUrl = skinImageDescendants[2].Attributes["src"].Value;
-						break;
+					AzurLaneShipSkin skin = new AzurLaneShipSkin();
+					HtmlNode[] skinImageDescendants = tab.Descendants("img").ToArray();
+
+					skin.Name = tab.Attributes["title"].Value.Replace("\n", "");
+					if (skin.Name == "Original Art") { continue; }
+					switch (skinImageDescendants.Count())
+					{
+						case 1:
+							skin.ImageUrl = skinImageDescendants[0].Attributes["srcset"].Value.Split(' ').Skip(skinImageDescendants[0].Attributes["srcset"].Value.Split(' ').Count() - 1).First();
+							break;
+						case 2:
+							skin.ImageUrl = skinImageDescendants[0].Attributes["srcset"].Value.Split(' ').Skip(skinImageDescendants[0].Attributes["srcset"].Value.Split(' ').Count() - 1).First();
+							skin.BackgroundUrl = skinImageDescendants[1].Attributes["src"].Value;
+							break;
+						case 3:
+						default:
+							skin.ChibiUrl = skinImageDescendants[0].Attributes["src"].Value;
+							skin.ImageUrl = skinImageDescendants[1].Attributes["srcset"].Value.Split(' ').Skip(skinImageDescendants[1].Attributes["srcset"].Value.Split(' ').Count() - 2).First();
+							skin.BackgroundUrl = skinImageDescendants[2].Attributes["src"].Value;
+							break;
+					}
+
+					HtmlNode skintableDescendants = tab.Descendants("table").First();
+					HtmlNode[] tablevalues = skintableDescendants.Descendants("td").ToArray();
+
+					skin.ObtainedFrom = tablevalues[0].InnerText;
+					if (tablevalues[1].InnerHtml == "Yes") skin.IsLive2D = true;
+
+					skins.Add(skin);
 				}
-
-				HtmlNode skintableDescendants = tab.Descendants("table").First();
-				HtmlNode[] tablevalues = skintableDescendants.Descendants("td").ToArray();
-
-				skin.ObtainedFrom = tablevalues[0].InnerText;
-				if (tablevalues[1].InnerHtml == "Yes") skin.IsLive2D = true;
-
-				skins.Add(skin);
+				ship.Skins = skins.ToArray();
 			}
-			ship.Skins = skins.ToArray();
 			#endregion
 
 			#region Get Ship Gallery
-			List<AzurLaneShipGalleryItem> galleryItems = new List<AzurLaneShipGalleryItem>();
-
-			try
+			if (galleryHtmlDoc.DocumentNode.FirstChild != null)
 			{
-				HtmlNode artWorkgalleryNode = galleryHtmlDoc.DocumentNode.SelectSingleNode("/html/body/div[3]/div[3]/div[5]/div[1]/div[3]");
-				if (artWorkgalleryNode != null)
+				List<AzurLaneShipGalleryItem> galleryItems = new List<AzurLaneShipGalleryItem>();
+
+				try
 				{
-					HtmlNode[] artWorkFrameNodes = artWorkgalleryNode.ChildNodes.Where(n => n.Name == "div").ToArray();
-
-					foreach (var artworkFrameNode in artWorkFrameNodes)
+					HtmlNode artWorkgalleryNode = galleryHtmlDoc.DocumentNode.SelectSingleNode("/html/body/div[3]/div[3]/div[5]/div[1]/div[3]");
+					if (artWorkgalleryNode != null)
 					{
-						AzurLaneShipGalleryItem item = new AzurLaneShipGalleryItem();
+						HtmlNode[] artWorkFrameNodes = artWorkgalleryNode.ChildNodes.Where(n => n.Name == "div").ToArray();
 
-						HtmlNode imageNode = artworkFrameNode.Descendants("img").First();
-						HtmlNode descriptionNode = artworkFrameNode.Descendants("div").Skip(1).First();
+						foreach (var artworkFrameNode in artWorkFrameNodes)
+						{
+							AzurLaneShipGalleryItem item = new AzurLaneShipGalleryItem();
 
-						item.Description = descriptionNode.InnerText;
+							HtmlNode imageNode = artworkFrameNode.Descendants("img").First();
+							HtmlNode descriptionNode = artworkFrameNode.Descendants("div").Skip(1).First();
 
-						String[] urlParts = imageNode.Attributes["src"].Value.Replace("thumb/", "").Split('/');
-						item.Url = String.Join('/', urlParts.Take(urlParts.Count() - 1));
+							item.Description = descriptionNode.InnerText;
 
-						galleryItems.Add(item);
+							String[] urlParts = imageNode.Attributes["src"].Value.Replace("thumb/", "").Split('/');
+							item.Url = String.Join('/', urlParts.Take(urlParts.Count() - 1));
+							item.InternalFileName = string.Join('_', item.Url.Split('/').Skip(item.Url.Split('/').Count() - 3).Take(3));
+
+							galleryItems.Add(item);
+						}
 					}
 				}
+				catch { }
+				ship.GalleryItems = galleryItems.ToArray();
 			}
-			catch { }
-			ship.GalleryItems = galleryItems.ToArray();
 			#endregion
 
 
@@ -346,68 +361,71 @@ namespace AzurLaneWikiScrapers.Scrapers
 			#endregion
 
 			#region Get Ship Quotes
-			HtmlNode tabber = quotesHtmlDoc.DocumentNode.Descendants().Where(n => n.HasClass("tabber")).First();
-			HtmlNode englishServer, chineseServer, japaneseServer;
-			englishServer = chineseServer = japaneseServer = null;
-
-			List<AzurLaneShipQuote> quotes = new List<AzurLaneShipQuote>();
-
-			if (tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "english server").Count() > 0)
+			if (quotesHtmlDoc.DocumentNode.FirstChild != null)
 			{
-				englishServer = tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "english server").First();
-			}
-			if (tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "chinese server").Count() > 0)
-			{
-				chineseServer = tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "chinese server").First();
-			}
-			if (tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "japanese server").Count() > 0)
-			{
-				japaneseServer = tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "japanese server").First();
-			}
+				HtmlNode tabber = quotesHtmlDoc.DocumentNode.Descendants().Where(n => n.HasClass("tabber")).First();
+				HtmlNode englishServer, chineseServer, japaneseServer;
+				englishServer = chineseServer = japaneseServer = null;
 
+				List<AzurLaneShipQuote> quotes = new List<AzurLaneShipQuote>();
 
-			// English Server Quote Loops
-			if (englishServer != null)
-			{
-				IEnumerable<HtmlNode> enTables = englishServer.ChildNodes.Where(n => n.OriginalName == "table");
-				for (int tableNr = 0; tableNr < enTables.Count(); tableNr++)
+				if (tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "english server").Count() > 0)
 				{
-					foreach (HtmlNode table in enTables)
-					{
-						quotes = ProcessQuotesTable(quotes, table, englishServer.ChildNodes.Where(n => n.OriginalName == "h3").ToArray()[tableNr].InnerText, "EN");
-					}
+					englishServer = tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "english server").First();
 				}
-			}
-
-
-			// Chinese Server Quote Loops
-			if (chineseServer != null)
-			{
-				IEnumerable<HtmlNode> cnTables = chineseServer.ChildNodes.Where(n => n.OriginalName == "table");
-				for (int tableNr = 0; tableNr < cnTables.Count(); tableNr++)
+				if (tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "chinese server").Count() > 0)
 				{
-					foreach (HtmlNode table in cnTables)
+					chineseServer = tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "chinese server").First();
+				}
+				if (tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "japanese server").Count() > 0)
+				{
+					japaneseServer = tabber.ChildNodes.Where(n => n.OriginalName == "div" && n.Attributes["title"].Value.ToLower() == "japanese server").First();
+				}
+
+
+				// English Server Quote Loops
+				if (englishServer != null)
+				{
+					IEnumerable<HtmlNode> enTables = englishServer.ChildNodes.Where(n => n.OriginalName == "table");
+					for (int tableNr = 0; tableNr < enTables.Count(); tableNr++)
 					{
-						quotes = ProcessQuotesTable(quotes, table, chineseServer.ChildNodes.Where(n => n.OriginalName == "h3").ToArray()[tableNr].InnerText, "CN");
+						foreach (HtmlNode table in enTables)
+						{
+							quotes = ProcessQuotesTable(quotes, table, englishServer.ChildNodes.Where(n => n.OriginalName == "h3").ToArray()[tableNr].InnerText, "EN");
+						}
 					}
 				}
 
-			}
 
-
-			// Japanese Server Quote Loops
-			if (japaneseServer != null)
-			{
-				IEnumerable<HtmlNode> jpTables = japaneseServer.ChildNodes.Where(n => n.OriginalName == "table");
-				for (int tableNr = 0; tableNr < jpTables.Count(); tableNr++)
+				// Chinese Server Quote Loops
+				if (chineseServer != null)
 				{
-					foreach (HtmlNode table in jpTables)
+					IEnumerable<HtmlNode> cnTables = chineseServer.ChildNodes.Where(n => n.OriginalName == "table");
+					for (int tableNr = 0; tableNr < cnTables.Count(); tableNr++)
 					{
-						quotes = ProcessQuotesTable(quotes, table, japaneseServer.ChildNodes.Where(n => n.OriginalName == "h3").ToArray()[tableNr].InnerText, "JP");
+						foreach (HtmlNode table in cnTables)
+						{
+							quotes = ProcessQuotesTable(quotes, table, chineseServer.ChildNodes.Where(n => n.OriginalName == "h3").ToArray()[tableNr].InnerText, "CN");
+						}
+					}
+
+				}
+
+
+				// Japanese Server Quote Loops
+				if (japaneseServer != null)
+				{
+					IEnumerable<HtmlNode> jpTables = japaneseServer.ChildNodes.Where(n => n.OriginalName == "table");
+					for (int tableNr = 0; tableNr < jpTables.Count(); tableNr++)
+					{
+						foreach (HtmlNode table in jpTables)
+						{
+							quotes = ProcessQuotesTable(quotes, table, japaneseServer.ChildNodes.Where(n => n.OriginalName == "h3").ToArray()[tableNr].InnerText, "JP");
+						}
 					}
 				}
+				ship.Quotes = quotes.ToArray();
 			}
-			ship.Quotes = quotes.ToArray();
 			#endregion
 
 			#region Get Ship Gear

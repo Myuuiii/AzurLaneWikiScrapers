@@ -5,6 +5,7 @@ namespace AzurLaneWikiScrapers
 		public AzurLaneWikiScraper() { }
 
 		public Scrapers.ShipUrlScraper UrlScraper = new Scrapers.ShipUrlScraper();
-		public Scrapers.ShipsScraper ShipsScraper = new Scrapers.ShipsScraper();
+		public Scrapers.ShipsDataScraper ShipsDataScraper = new Scrapers.ShipsDataScraper();
+		public Scrapers.ShipsImagesScraper ShipsImagesScraper = new Scrapers.ShipsImagesScraper();
 	}
 }
