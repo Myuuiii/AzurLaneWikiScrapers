@@ -50,6 +50,12 @@ namespace AzurLaneWikiScrapersConsole
 				{
 					_downloadShipData = true;
 					_downloadShipImages = true;
+					_downloadShipUrls = true;
+				}
+				if (args.Contains("--all-noimg"))
+				{
+					_downloadShipData = true;
+					_downloadShipUrls = true;
 				}
 			}
 
