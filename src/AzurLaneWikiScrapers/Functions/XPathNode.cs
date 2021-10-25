@@ -2,7 +2,7 @@ using HtmlAgilityPack;
 
 namespace AzurLaneWikiScrapers
 {
-	public partial class Functions
+	internal partial class Functions
 	{
 		/// <summary>
 		/// Translate the XPath in case the ship page has a note which changes the structure
@@ -12,7 +12,7 @@ namespace AzurLaneWikiScrapers
 		/// <param name="xPath">The xPath of the node to translate and to retrieve the node of</param>
 		/// <param name="hasNote">Indicator if the ship has a note</param>
 		/// <returns></returns>
-		internal static HtmlNode GetXPathNode(HtmlDocument document, string xPath, bool hasNote)
+		public static HtmlNode GetXPathNode(HtmlDocument document, string xPath, bool hasNote)
 		{
 			if (hasNote)
 			{
