@@ -79,7 +79,9 @@ namespace AzurLaneWikiScrapersConsole
 				}
 			}
 
-			#region Export Ship Urls
+			/// <summary>
+			/// Export ship urls
+			/// </summary>
 			AzurLaneShipSource[] shipSources = scrapers.UrlScraper.Execute();
 			AnsiConsole.MarkupLine("[gray]Loaded ship sources[/]");
 			if (_downloadShipUrls)
@@ -87,9 +89,10 @@ namespace AzurLaneWikiScrapersConsole
 				File.WriteAllText($"{_exportFolder}shipUrls.json", JsonConvert.SerializeObject(shipSources, Formatting.Indented));
 				AnsiConsole.MarkupLine("[lime]Exported ship sources[/]");
 			}
-			#endregion
 
-			#region Export ship data
+			/// <summary>
+			/// Export ship data
+			/// </summary>
 			if (_downloadShipData)
 			{
 				currentItem = 1;
@@ -113,9 +116,10 @@ namespace AzurLaneWikiScrapersConsole
 				});
 				AnsiConsole.MarkupLine("[lime]Exported Ships Data![/]");
 			}
-			#endregion
 
-			#region Export ship images
+			/// <summary>
+			/// Export ship images
+			/// </summary>
 			if (_downloadShipImages)
 			{
 				if (_downloadShipData == false && !File.Exists($"{_exportFolder}ships.json"))
@@ -144,10 +148,10 @@ namespace AzurLaneWikiScrapersConsole
 				});
 				AnsiConsole.MarkupLine("[lime]Exported Ship Images![/]");
 			}
-			#endregion
 
-			#region Export events data
-
+			/// <summary>
+			/// Export events data
+			/// </summary>
 			if (_downloadEventsData)
 			{
 				AnsiConsole.Status().Start("Scraping Events...", ctx =>
@@ -158,10 +162,9 @@ namespace AzurLaneWikiScrapersConsole
 				AnsiConsole.MarkupLine("[lime]Exported Event Data![/]");
 			}
 
-			#endregion
-
-			#region Export events images
-
+			/// <summary>
+			/// Export events images
+			/// </summary>
 			if (_downloadEventsImages)
 			{
 				AnsiConsole.Status().Start("Scraping Event Images...", ctx =>
@@ -177,9 +180,6 @@ namespace AzurLaneWikiScrapersConsole
 				});
 				AnsiConsole.MarkupLine("[lime]Exported Event Images![/]");
 			}
-			#endregion
 		}
-
-
 	}
 }

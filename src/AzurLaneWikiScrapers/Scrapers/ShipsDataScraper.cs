@@ -18,6 +18,9 @@ namespace AzurLaneWikiScrapers.Scrapers
 		/// <returns></returns>
 		public AzurLaneShip Execute(AzurLaneShipSource shipSource)
 		{
+			/// <summary>
+			/// Download all the pages used for retrieving the ship's data
+			/// </summary>
 			HtmlDocument htmlDoc = new HtmlDocument();
 			htmlDoc.LoadHtml(new WebClient().DownloadString($"https://azurlane.koumakan.jp/w/index.php?title={shipSource.Url.Split('/').Last()}&mobileaction=toggle_view_desktop"));
 
@@ -35,27 +38,27 @@ namespace AzurLaneWikiScrapers.Scrapers
 			}
 			catch { }
 
+			/// <summary>
+			/// Initialize variables
+			/// </summary>
 			AzurLaneShip ship = new AzurLaneShip();
 			bool shipHasNote = false;
 
-
-			#region Check if ship has a note
+			/// <summary>
+			/// Check if a node exists which has the class "hatnote"
+			/// </summary>
 			shipHasNote = htmlDoc.DocumentNode.SelectSingleNode("/html/body/div[3]/div[3]/div[5]/div[1]").Descendants("div").First().HasClass("hatnote");
-			#endregion
 
-
-			#region Get Base Ship Information
-
-			// Get ship id
+			/// <summary>
+			/// Retrieve base ship information
+			/// </summary>
 			ship.Id = shipSource.ShipId;
-
-			// Get ship name
 			ship.Name = shipSource.Name;
-
-			// Get thumbnail ur; 
 			ship.ThumbnailUrl = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/img", shipHasNote).Attributes["src"].Value.Replace("\n", "").Replace(" ", "");
 
-			// Get a ships construction values
+			/// <summary>
+			/// Retrieve a ship's construction values
+			/// </summary>
 			HtmlNode constructionTimeNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[1]/td[1]", shipHasNote);
 			string constructionTimeNodeText = constructionTimeNode.InnerText.Replace("\n", "");
 			string[] constructText = null;
@@ -74,19 +77,23 @@ namespace AzurLaneWikiScrapers.Scrapers
 				ship.ConstructionValues.Exchange = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[2]/table/tbody/tr[4]/td[5]", shipHasNote).InnerText.Replace("\n", "").Contains("✓");
 			}
 
-
-			// Get ship rarity and stars
+			/// <summary>
+			/// Retrieve a ship's rarity and stars
+			/// </summary>
 			HtmlNode rarityNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[2]/td[1]", shipHasNote);
 			ship.Rarity = (AzurLaneRarity)Enum.Parse(typeof(AzurLaneRarity), rarityNode.InnerText.Replace("★", "").Replace("\n", "").Replace(" ", ""));
 			ship.Stars = Regex.Matches(rarityNode.InnerText, "★").Count;
 
-			// Get ship hull
+			/// <summary>
+			/// Retrieve a ship's hull
+			/// </summary>
 			HtmlNode hullNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[3]/td", shipHasNote);
 			ship.Hull = (AzurLaneHull)Enum.Parse(typeof(AzurLaneHull), hullNode.InnerText.Replace("\n", "").Replace(" ", "").Split('&')[0]);
-			#endregion
 
 
-			#region Get Ship Stats
+			/// <summary>
+			/// Retrieve ship statistics
+			/// </summary>
 			List<AzurLaneShipStats> stats = new List<AzurLaneShipStats>();
 			HtmlNode statsNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[2]/table/tbody", shipHasNote);
 			HtmlNode[] statRows = statsNode.ChildNodes.Where(n => n.Name == "tr").Skip(1).Take(statsNode.ChildNodes.Where(n => n.Name == "tr").Skip(1).Count() - 1).ToArray();
@@ -145,10 +152,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 				ship.Level125RetrofitStats = stats.First();
 			}
 			else throw new Exception("Too many or too little statistics received");
-			#endregion
 
-
-			#region Get Ship Skins
+			/// <summary>
+			/// Retrieve ship skins
+			/// </summary>
 			if (galleryHtmlDoc.DocumentNode.FirstChild != null)
 			{
 				List<AzurLaneShipSkin> skins = new List<AzurLaneShipSkin>();
@@ -189,9 +196,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 				}
 				ship.Skins = skins.ToArray();
 			}
-			#endregion
 
-			#region Get Ship Gallery
+			/// <summary>
+			/// Retieve ship gallery
+			/// </summary>
 			if (galleryHtmlDoc.DocumentNode.FirstChild != null)
 			{
 				List<AzurLaneShipGalleryItem> galleryItems = new List<AzurLaneShipGalleryItem>();
@@ -223,10 +231,11 @@ namespace AzurLaneWikiScrapers.Scrapers
 				catch { }
 				ship.GalleryItems = galleryItems.ToArray();
 			}
-			#endregion
 
 
-			#region Get Ship Misc Info
+			/// <summary>
+			/// Retrieve ship misc info
+			/// </summary>
 			HtmlNode miscInfoNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[2]/td[2]", shipHasNote);
 			HtmlNode[] anchorNodes = miscInfoNode.ChildNodes.Where(n => n.Name == "a").ToArray();
 			foreach (HtmlNode anchorNode in anchorNodes)
@@ -253,10 +262,11 @@ namespace AzurLaneWikiScrapers.Scrapers
 
 			HtmlNode voiceActorNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/table/tbody/tr[1]/td[2]", shipHasNote);
 			ship.VoiceActor = voiceActorNode.InnerText.Replace("\n", "").Replace("Play", "").Trim();
-			#endregion
 
 
-			#region Get Ship Limit Breaks & Skills
+			/// <summary>
+			/// Get ship limit breaks and skills
+			/// </summary>
 			HtmlNode limitBreakSkillNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/table", shipHasNote);
 			HtmlNode[] limitBreakSkillRows = limitBreakSkillNode.Descendants("tr").Skip(1).ToArray();
 
@@ -291,10 +301,11 @@ namespace AzurLaneWikiScrapers.Scrapers
 
 			ship.LimitBreaks = limitBreaks.ToArray();
 			ship.Skills = skills.ToArray();
-			#endregion
 
 
-			#region Get ship enhance values
+			/// <summary>
+			/// Get ship enhance values
+			/// </summary>
 			HtmlNode enhanceScrapNode = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/table[3]/tbody", shipHasNote);
 
 			HtmlNode enhanceValuesNode = enhanceScrapNode.Descendants("td").First();
@@ -326,9 +337,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 					currentIndex++;
 				}
 			}
-			#endregion
 
-			#region Get ship scrap values
+			/// <summary>
+			/// Get ship scrap values
+			/// </summary>
 			ship.ScrapValues = new AzurLaneShipScrapValues();
 			HtmlNode scrapValuesNode = enhanceScrapNode.Descendants("td").Skip(1).First();
 			HtmlNode[] scrapValuesImageNodes = scrapValuesNode.Descendants("img").ToArray();
@@ -357,9 +369,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 					currentIndex++;
 				}
 			}
-			#endregion
 
-			#region Get Ship Quotes
+			/// <summary>
+			/// Get ship quotes
+			/// </summary>
 			if (quotesHtmlDoc.DocumentNode.FirstChild != null)
 			{
 				HtmlNode tabber = quotesHtmlDoc.DocumentNode.Descendants().Where(n => n.HasClass("tabber")).First();
@@ -425,9 +438,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 				}
 				ship.Quotes = quotes.ToArray();
 			}
-			#endregion
 
-			#region Get Ship Gear
+			/// <summary>
+			/// Get ship gear
+			/// </summary>
 			HtmlNode gearTable = Functions.GetXPathNode(htmlDoc, "/html/body/div[3]/div[3]/div[5]/div[1]/div[2]/div[1]/div[1]/table[1]/tbody", shipHasNote);
 
 			// SKip 2 rows to skip the table name and the column name rows
@@ -463,14 +477,18 @@ namespace AzurLaneWikiScrapers.Scrapers
 				gear.Add(slot);
 			}
 			ship.EquippableSlots = gear.ToArray();
-			#endregion
 
 			return ship;
 		}
 
 		/// <summary>
-		/// Get all the ship's quotes
+		/// Retrieve all the quotes from a quotes table
 		/// </summary>
+		/// <param name="quotes">List that the quotes should be stored in</param>
+		/// <param name="tableNode">Quotes table node</param>
+		/// <param name="skinName">Name of the skin that the quotes belong to</param>
+		/// <param name="language">Language of the quotes</param>
+		/// <returns></returns>
 		private static List<AzurLaneShipQuote> ProcessQuotesTable(List<AzurLaneShipQuote> quotes, HtmlNode tableNode, String skinName, String language)
 		{
 			// Skip the first TR as it contains the headers
