@@ -13,14 +13,9 @@ namespace AzurLaneWikiScrapers.Models
 		public int Torpedo { get; set; }
 
 		/// <summary>
-		/// Minimum damage per torpedo
+		/// Damage per torpedo
 		/// </summary>
-		public int MinDamage { get; set; }
-
-		/// <summary>
-		/// Maximum damage per torpedo
-		/// </summary>
-		public int MaxDamage { get; set; }
+		public int[] Damage { get; set; }
 
 		public int TorpedoCount { get; set; }
 		public int Spread { get; set; }

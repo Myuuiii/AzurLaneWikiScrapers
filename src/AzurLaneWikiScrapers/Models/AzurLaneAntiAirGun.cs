@@ -11,15 +11,11 @@ namespace AzurLaneWikiScrapers.Models
 		public AzurLaneNation Nation { get; set; }
 
 		public int AntiAir { get; set; }
-		/// <summary>
-		/// Minimum damage per shell
-		/// </summary>
-		public int MinDamage { get; set; }
 
 		/// <summary>
-		/// Maximum damage per shell
+		/// Damage per shell
 		/// </summary>
-		public int MaxDamage { get; set; }
+		public int[] Damage { get; set; }
 
 		/// <summary>
 		/// Damage boost in %
@@ -27,14 +23,10 @@ namespace AzurLaneWikiScrapers.Models
 		public int OPSDamageBoost { get; set; }
 
 		/// <summary>
-		/// The minimum rate of fire on the gun in seconds
+		/// Rate of fire on the gun in seconds
 		/// </summary>
-		public decimal MinRateOfFire { get; set; }
+		public decimal[] RateOfFire { get; set; }
 
-		/// <summary>
-		/// The maximum rate of fire on the gun in seconds
-		/// </summary>
-		public decimal MaxRateOfFire { get; set; }
 		public int Angle { get; set; }
 		public int Range { get; set; }
 		public AzurLaneAmmoType AmmoType { get; set; }

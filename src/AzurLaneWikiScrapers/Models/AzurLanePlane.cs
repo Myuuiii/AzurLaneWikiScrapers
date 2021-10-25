@@ -13,20 +13,17 @@ namespace AzurLaneWikiScrapers.Models
 		public int Aviation { get; set; }
 		public int Speed { get; set; }
 
-		public int[] HealthScale { get; set; }
+		public int[] Health { get; set; }
 
 		/// <summary>
-		/// Minimum damage dealt per torpedo (if type is torpedo bomber)
+		/// Damage dealt per torpedo (if type is torpedo bomber)
 		/// </summary>
-		public int MinDamage { get; set; }
+		public int[] Damage { get; set; }
 
 		/// <summary>
-		/// Maximum damage dealt per torpedo (if type is torpedo bomber)
+		/// The rate of fire of the plane
 		/// </summary>
-		public int MaxDamage { get; set; }
-
-		public decimal MinRateOfFire { get; set; }
-		public decimal MaxRateOfFire { get; set; }
+		public decimal RateOfFire { get; set; }
 
 		public int? TorpedoCount { get; set; }
 		public decimal DodgeLimit { get; set; }
