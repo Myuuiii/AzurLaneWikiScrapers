@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Title>Azur Lane Wiki Scrapers</Title>
     <PackageId>AzurLaneWikiScrapers</PackageId>
-    <Version>0.1.0</Version>
+    <Version>1.0.0</Version>
     <Authors>Myuuiii</Authors>
     <Description>A set of scrapers that scrape data from the Azur Lane Wiki</Description>
     <PackageIconUrl>PackageIcon.png</PackageIconUrl>
