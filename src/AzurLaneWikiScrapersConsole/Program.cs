@@ -61,15 +61,21 @@ namespace AzurLaneWikiScrapersConsole
 					_downloadShipData = true;
 					_downloadShipImages = true;
 					_downloadShipUrls = true;
+
+					_downloadEventsData = true;
+					_downloadEventsImages = true;
 				}
 				if (args.Contains("--all-noimg"))
 				{
 					_downloadShipData = true;
 					_downloadShipUrls = true;
+
+					_downloadEventsData = true;
 				}
 				if (args.Contains("--all-nodata"))
 				{
 					_downloadShipImages = true;
+					_downloadEventsImages = true;
 				}
 			}
 
