@@ -9,7 +9,7 @@ namespace AzurLaneWikiScrapers.Models
 		/// <summary>
 		/// The weapon's type, this is displayed as a hull type
 		/// </summary>
-		public AzurLaneHull Hull { get; set; }
+		public string Type { get; set; }
 		public AzurLaneNation Nation { get; set; }
 		public AzurLaneRarity Rarity { get; set; }
 
