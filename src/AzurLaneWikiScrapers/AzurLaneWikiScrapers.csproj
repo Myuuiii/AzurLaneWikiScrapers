@@ -1,12 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>Azur Lane Wiki Scrapers</Title>
+    <PackageId>AzurLaneWikiScrapers</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Myuuiii</Authors>
+    <Description>A set of scrapers that scrape data from the Azur Lane Wiki</Description>
+    <PackageIconUrl>PackageIcon.png</PackageIconUrl>
+    <PackageIcon>PackageIcon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/Myuuiii/AzurLaneWikiScrapers</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
     <PackageReference Include="Spectre.Console" Version="0.42.0" />
+
+    <None Include="PackageIcon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
