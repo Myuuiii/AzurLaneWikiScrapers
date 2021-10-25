@@ -10,6 +10,7 @@ namespace AzurLaneWikiScrapers.Models
 		/// The weapon's type, this is displayed as a hull type
 		/// </summary>
 		public string Type { get; set; }
+		public int Level { get; set; }
 		public AzurLaneNation Nation { get; set; }
 		public AzurLaneRarity Rarity { get; set; }
 
@@ -32,9 +33,14 @@ namespace AzurLaneWikiScrapers.Models
 		public int OPSDamageBoost { get; set; }
 
 		/// <summary>
-		/// The rate of fire on the gun in seconds
+		/// The minimum rate of fire on the gun in seconds
 		/// </summary>
-		public decimal RateOfFire { get; set; }
+		public decimal MinRateOfFire { get; set; }
+
+		/// <summary>
+		/// The maximum rate of fire on the gun in seconds
+		/// </summary>
+		public decimal MaxRateOfFire { get; set; }
 		public int Spread { get; set; }
 		public int Angle { get; set; }
 

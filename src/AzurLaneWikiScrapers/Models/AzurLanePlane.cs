@@ -6,6 +6,7 @@ namespace AzurLaneWikiScrapers.Models
 	{
 		public string Name { get; set; }
 		public AzurLanePlaneType Type { get; set; }
+		public int Level { get; set; }
 		public AzurLaneRarity Rarity { get; set; }
 		public AzurLaneNation Nation { get; set; }
 
