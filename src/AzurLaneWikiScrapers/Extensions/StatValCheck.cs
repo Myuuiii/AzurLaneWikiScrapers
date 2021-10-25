@@ -1,6 +1,6 @@
 namespace AzurLaneWikiScrapers
 {
-	public partial class Extensions
+	internal partial class Extensions
 	{
 		public static string StatValCheck(this string input)
 		{

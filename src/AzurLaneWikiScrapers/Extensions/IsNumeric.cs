@@ -1,6 +1,6 @@
 namespace AzurLaneWikiScrapers
 {
-	public static partial class Extensions
+	internal static partial class Extensions
 	{
 		public static bool IsNumeric(this string s)
 		{
