@@ -1,4 +1,4 @@
-<img src="./.github/RepoBanner.png" />
+<img src="./doc/ReadMeBanner.png" />
 
 # Options
 
