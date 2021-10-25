@@ -6,8 +6,7 @@ namespace AzurLaneWikiScrapers.Models
 	{
 		public List<AzurLaneGun> ShipGuns { get; set; } = new List<AzurLaneGun>();
 		public List<AzurLaneTorpedo> ShipTorpedoes { get; set; } = new List<AzurLaneTorpedo>();
-		// Planes
-		// Seaplanes
+		public List<AzurLanePlane> Planes { get; set; } = new List<AzurLanePlane>();
 		// AntiAirGuns
 		// Auxiliary
 		// Cargo
