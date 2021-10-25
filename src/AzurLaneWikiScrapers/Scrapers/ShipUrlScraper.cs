@@ -10,9 +10,9 @@ namespace AzurLaneWikiScrapers.Scrapers
 	public class ShipUrlScraper
 	{
 		/// <summary>
-		/// Retrieve all the ship urls
+		/// Retrieve all the <see cref="AzurLaneShipSource"/>s from the Azur Lane Wiki
 		/// </summary>
-		/// <returns><see cref="string[]" /></returns>
+		/// <returns></returns>
 		public AzurLaneShipSource[] Execute()
 		{
 			// This is the list that we will return later converted to a string[]

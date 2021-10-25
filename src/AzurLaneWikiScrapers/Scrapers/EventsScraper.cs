@@ -10,8 +10,9 @@ namespace AzurLaneWikiScrapers.Scrapers
 	public class EventsScraper
 	{
 		/// <summary>
-		/// Retrive a list of <see cref="AzurLaneEvent"/> objects
+		/// Retrieve a list of events from the Azur Lane Wiki
 		/// </summary>
+		/// <returns></returns>
 		public AzurLaneEvent[] Execute()
 		{
 			HtmlDocument eventsDoc = new HtmlDocument();
@@ -77,6 +78,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 				events.Add(eventData);
 			}
 
+			/// <summary>
+			/// Retrieve all the permanent events
+			/// </summary>
+			/// <returns></returns>
 			HtmlNode paragraphNode = eventsDoc.DocumentNode.SelectSingleNode("/html/body/div[3]/div[3]/div[5]/div[1]/p[3]");
 			foreach (HtmlNode imgNode in paragraphNode.Descendants("a"))
 			{

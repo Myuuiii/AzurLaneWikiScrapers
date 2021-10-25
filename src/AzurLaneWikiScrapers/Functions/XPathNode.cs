@@ -8,7 +8,11 @@ namespace AzurLaneWikiScrapers
 		/// Translate the XPath in case the ship page has a note which changes the structure
 		/// Please do only provide XPaths of ships that do not have a note
 		/// </summary>
-		public static HtmlNode GetXPathNode(HtmlDocument document, string xPath, bool hasNote)
+		/// <param name="document">The main ship page html document</param>
+		/// <param name="xPath">The xPath of the node to translate and to retrieve the node of</param>
+		/// <param name="hasNote">Indicator if the ship has a note</param>
+		/// <returns></returns>
+		internal static HtmlNode GetXPathNode(HtmlDocument document, string xPath, bool hasNote)
 		{
 			if (hasNote)
 			{

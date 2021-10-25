@@ -7,6 +7,11 @@ namespace AzurLaneWikiScrapers.Scrapers
 {
 	public class ShipsImagesScraper
 	{
+		/// <summary>
+		/// Download all the images belonging to a ship to the specified folder
+		/// </summary>
+		/// <param name="ship">Ship object of which to download the images</param>
+		/// <param name="exportFolder">Folder to save the images to</param>
 		public void Execute(AzurLaneShip ship, string exportFolder)
 		{
 			string fileRegexPattern = @"[a-zA-Z0-9-. ]*";

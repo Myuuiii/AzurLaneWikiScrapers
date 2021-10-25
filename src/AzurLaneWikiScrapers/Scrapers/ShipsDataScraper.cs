@@ -12,10 +12,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 	public class ShipsDataScraper
 	{
 		/// <summary>
-		/// Retrieve a <see cref="AzurLaneShip"/> object
+		/// Retrieve a ship from the Azur Lane Wiki 
 		/// </summary>
-		/// <param name="shipUrl">ShipSource of which to retrieve the <see cref-"AzurLaneShip"/> object</param>
-		/// <returns><see cref="AzurLaneShip"/></returns>
+		/// <param name="shipSource">Ship source used to retrieve a ship object</param>
+		/// <returns></returns>
 		public AzurLaneShip Execute(AzurLaneShipSource shipSource)
 		{
 			HtmlDocument htmlDoc = new HtmlDocument();
