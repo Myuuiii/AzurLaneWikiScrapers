@@ -149,7 +149,7 @@ namespace AzurLaneWikiScrapersConsole
 					AzurLaneEvent[] events = scrapers.EventsScraper.Execute();
 					File.WriteAllText($"{_exportFolder}/events/data.json", JsonConvert.SerializeObject(events, Formatting.Indented));
 				});
-				AnsiConsole.MarkupLine("[lime]Exported Events![/]");
+				AnsiConsole.MarkupLine("[lime]Exported Events Data![/]");
 			}
 
 			#endregion
@@ -169,6 +169,7 @@ namespace AzurLaneWikiScrapersConsole
 						currentItem++;
 					}
 				});
+				AnsiConsole.MarkupLine("[lime]Exported Event Images![/]");
 			}
 			#endregion
 		}
