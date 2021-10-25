@@ -1,27 +1,37 @@
 <img src="./.github/RepoBanner.png" />
 
 # Options
-## `--all`
+
+## Global
+### `--all`
 Download everything including images
 
-## `--all-noimg`
+### `--all-noimg`
 Download everything except images
 
-## `--all-nodata`
+### `--all-nodata`
 Download everything except for data
 
-## `--debug`
+### `--debug`
 Enables a readline before starting the scraper allowing you to attach a debugger
 
-## `--ships-data`
+## Ships
+
+### `--ships-data`
 Download ships data
 
-## `--ships-images`
+### `--ships-images`
 Download ships images
 
-## `--ships-urls`
+### `--ships-urls`
 Download a list of ship urls 
 
+## Events
+### `--events-data`
+Download events data
+
+### `--events-images`
+Download events images
 
 # Functions to be implemented before release
 - [x] Download all ship data
