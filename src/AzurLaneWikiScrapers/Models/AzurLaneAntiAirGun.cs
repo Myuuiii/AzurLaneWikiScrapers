@@ -5,6 +5,7 @@ namespace AzurLaneWikiScrapers.Models
 	public class AzurLaneAntiAirGun
 	{
 		public string Name { get; set; }
+		public string IconUrl { get; set; }
 		public string Type { get; set; }
 		public int Level { get; set; }
 		public AzurLaneRarity Rarity { get; set; }

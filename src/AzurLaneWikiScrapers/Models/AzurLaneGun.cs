@@ -5,6 +5,7 @@ namespace AzurLaneWikiScrapers.Models
 	public class AzurLaneGun
 	{
 		public string Name { get; set; }
+		public string IconUrl { get; set; }
 
 		/// <summary>
 		/// The weapon's type, this is displayed as a hull type

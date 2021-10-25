@@ -5,6 +5,7 @@ namespace AzurLaneWikiScrapers.Models
 	public class AzurLaneTorpedo
 	{
 		public string Name { get; set; }
+		public string IconUrl { get; set; }
 		public int Level { get; set; }
 		public AzurLaneRarity Rarity { get; set; }
 		public AzurLaneNation Nation { get; set; }

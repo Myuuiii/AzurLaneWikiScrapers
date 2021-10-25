@@ -5,6 +5,7 @@ namespace AzurLaneWikiScrapers.Models
 	public class AzurLaneAuxiliary
 	{
 		public string Name { get; set; }
+		public string IconUrl { get; set; }
 		public AzurLaneRarity Rarity { get; set; }
 		public AzurLaneNation Nation { get; set; }
 
