@@ -38,3 +38,6 @@ Download events data
 
 ### `--events-images`
 Download events images
+
+# Example
+## `AzurLaneWikiScraperConsole.exe --ships --events-data`
