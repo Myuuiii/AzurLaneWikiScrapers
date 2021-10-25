@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using AzurLaneWikiScrapers.Enums;
 using AzurLaneWikiScrapers.Models;
 using HtmlAgilityPack;
-using Spectre.Console;
 
 namespace AzurLaneWikiScrapers.Scrapers
 {

@@ -14,11 +14,13 @@ namespace AzurLaneWikiScrapersConsole
 	{
 		private static string _exportFolder = Environment.CurrentDirectory.ToString() + "./export/";
 		private static int currentItem = 0;
-		public static string[] ValidItems = new string[] { "--debug", "--ships-data", "--ships-images" };
 
 		private static bool _downloadShipData = false;
 		private static bool _downloadShipImages = false;
 		private static bool _downloadShipUrls = false;
+
+		private static bool _downloadEventsData = false;
+		private static bool _downloadEventsImages = false;
 
 		public static List<AzurLaneShip> ships = new List<AzurLaneShip>();
 
@@ -27,6 +29,7 @@ namespace AzurLaneWikiScrapersConsole
 			if (!Directory.Exists(_exportFolder)) Directory.CreateDirectory(_exportFolder);
 			if (!Directory.Exists(_exportFolder + "ships/")) Directory.CreateDirectory(_exportFolder + "ships/");
 			if (!Directory.Exists(_exportFolder + "gallery/")) Directory.CreateDirectory(_exportFolder + "gallery/");
+			if (!Directory.Exists(_exportFolder + "events/")) Directory.CreateDirectory(_exportFolder + "events/");
 
 			AnsiConsole.Write(new Rule("Azur Lane Wiki Scraper").Alignment(Justify.Left));
 			AzurLaneWikiScraper scrapers = new AzurLaneWikiScraper();
@@ -44,6 +47,9 @@ namespace AzurLaneWikiScrapersConsole
 				if (args.Contains("--ships-data")) _downloadShipData = true;
 				if (args.Contains("--ships-images")) _downloadShipImages = true;
 				if (args.Contains("--ships-urls")) _downloadShipUrls = true;
+
+				if (args.Contains("--events-data")) _downloadEventsData = true;
+				if (args.Contains("--events-images")) _downloadEventsImages = true;
 
 				// All / All - Excluded options
 				if (args.Contains("--all"))
@@ -130,7 +136,39 @@ namespace AzurLaneWikiScrapersConsole
 			}
 			#endregion
 
-			AnsiConsole.MarkupLine("[red]--- All specified operations were executed[/]");
+			#region Export events data
+
+			if (_downloadEventsData)
+			{
+				AnsiConsole.Status().Start("Scraping Events...", ctx =>
+				{
+					AzurLaneEvent[] events = scrapers.EventsScraper.Execute();
+					File.WriteAllText($"{_exportFolder}/events/data.json", JsonConvert.SerializeObject(events, Formatting.Indented));
+				});
+				AnsiConsole.MarkupLine("[lime]Exported Events![/]");
+			}
+
+			#endregion
+
+			#region Export events images
+
+			if (_downloadEventsImages)
+			{
+				AnsiConsole.Status().Start("Scraping Event Images...", ctx =>
+				{
+					AzurLaneEvent[] events = scrapers.EventsScraper.Execute();
+					currentItem = 1;
+					foreach (AzurLaneEvent eventData in events)
+					{
+						ctx.Status("Scraping event images: " + currentItem + "/" + events.Length + $" ([gray]{eventData.Name}[/])");
+						scrapers.EventImagesScraper.Execute(eventData, _exportFolder);
+						currentItem++;
+					}
+				});
+			}
+			#endregion
 		}
+
+
 	}
 }
