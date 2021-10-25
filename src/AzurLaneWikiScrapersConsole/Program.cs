@@ -51,6 +51,10 @@ namespace AzurLaneWikiScrapersConsole
 				if (args.Contains("--events-data")) _downloadEventsData = true;
 				if (args.Contains("--events-images")) _downloadEventsImages = true;
 
+				// Section options
+				if (args.Contains("--ships")) _downloadShipData = _downloadShipImages = _downloadShipUrls = true;
+				if (args.Contains("--events")) _downloadEventsData = _downloadEventsImages = true;
+
 				// All / All - Excluded options
 				if (args.Contains("--all"))
 				{

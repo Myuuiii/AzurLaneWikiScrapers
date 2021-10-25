@@ -16,6 +16,8 @@ Download everything except for data
 Enables a readline before starting the scraper allowing you to attach a debugger
 
 ## Ships
+### `--ships`
+Download ships data, images and urls
 
 ### `--ships-data`
 Download ships data
@@ -27,6 +29,9 @@ Download ships images
 Download a list of ship urls 
 
 ## Events
+### `--events`
+Download events data and images
+
 ### `--events-data`
 Download events data
 
