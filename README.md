@@ -1,42 +1,11 @@
 <img src="./doc/ReadMeBanner.png" />
 
-# Options
-
-## Global
-### `--all`
-Download everything including images
-
-### `--all-noimg`
-Download everything except images
-
-### `--all-nodata`
-Download everything except for data
-
-### `--debug`
-Enables a readline before starting the scraper allowing you to attach a debugger
-
-## Ships
-### `--ships`
-Download ships data, images and urls
-
-### `--ships-data`
-Download ships data
-
-### `--ships-images`
-Download ships images
-
-### `--ships-urls`
-Download a list of ship urls 
-
-## Events
-### `--events`
-Download events data and images
-
-### `--events-data`
-Download events data
-
-### `--events-images`
-Download events images
+<a href="https://github.com/Myuuiii/AzurLaneWikiScraper/blob/master/AzurLaneWikiScrapers.md">
+	<img src="./doc/LibraryButton.png"/>
+</a>
+<a href="https://github.com/Myuuiii/AzurLaneWikiScraper/blob/master/AzurLaneWikiScrapersConsole.md">
+	<img src="./doc/ConsoleAppButton.png"/>
+</a>
 
 # Functions to be implemented before release
 - [x] Download all ship data
