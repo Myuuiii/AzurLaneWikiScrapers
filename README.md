@@ -12,5 +12,5 @@
 - [x] Download all ship images
 - [x] Download all event data
 - [x] Download all event images
-- [ ] Download all equipment data
-- [ ] Download all equipment images
+- [ ] (In Progress) Download all equipment data
+- [ ] (In Progress) Download all equipment images
