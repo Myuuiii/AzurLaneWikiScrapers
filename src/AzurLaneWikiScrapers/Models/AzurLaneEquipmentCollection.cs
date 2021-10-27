@@ -10,6 +10,6 @@ namespace AzurLaneWikiScrapers.Models
 		public List<AzurLaneAntiAirGun> AntiAirGuns { get; set; } = new List<AzurLaneAntiAirGun>();
 		public List<AzurLaneAuxiliary> Auxiliary { get; set; } = new List<AzurLaneAuxiliary>();
 		public List<AzurLaneCargo> Cargo { get; set; } = new List<AzurLaneCargo>();
-		// Antisubmarine
+		public List<AzurLaneAntiSubmarine> AntiSubmarines { get; set; } = new List<AzurLaneAntiSubmarine>();
 	}
 }
