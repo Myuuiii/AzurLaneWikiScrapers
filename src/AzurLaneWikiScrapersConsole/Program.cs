@@ -22,6 +22,8 @@ namespace AzurLaneWikiScrapersConsole
 		private static bool _downloadEventsData = false;
 		private static bool _downloadEventsImages = false;
 
+		private static bool _downloadEquipmentUrls = false;
+
 		public static List<AzurLaneShip> ships = new List<AzurLaneShip>();
 
 		static void Main(string[] args)
@@ -51,9 +53,12 @@ namespace AzurLaneWikiScrapersConsole
 				if (args.Contains("--events-data")) _downloadEventsData = true;
 				if (args.Contains("--events-images")) _downloadEventsImages = true;
 
+				if (args.Contains("--equipment-urls")) _downloadEquipmentUrls = true;
+
 				// Section options
 				if (args.Contains("--ships")) _downloadShipData = _downloadShipImages = _downloadShipUrls = true;
 				if (args.Contains("--events")) _downloadEventsData = _downloadEventsImages = true;
+				if (args.Contains("--equipment")) _downloadEquipmentUrls = true;
 
 				// All / All - Excluded options
 				if (args.Contains("--all"))
@@ -64,6 +69,8 @@ namespace AzurLaneWikiScrapersConsole
 
 					_downloadEventsData = true;
 					_downloadEventsImages = true;
+
+					_downloadEquipmentUrls = true;
 				}
 				if (args.Contains("--all-noimg"))
 				{
@@ -71,6 +78,8 @@ namespace AzurLaneWikiScrapersConsole
 					_downloadShipUrls = true;
 
 					_downloadEventsData = true;
+
+					_downloadEquipmentUrls = true;
 				}
 				if (args.Contains("--all-nodata"))
 				{
@@ -84,6 +93,12 @@ namespace AzurLaneWikiScrapersConsole
 			/// </summary>
 			AzurLaneShipSource[] shipSources = scrapers.UrlScraper.Execute();
 			AnsiConsole.MarkupLine("[gray]Loaded ship sources[/]");
+			AzurLaneEquipmentSource[] equipmentSources = scrapers.EquipmentUrlScraper.Execute();
+			AnsiConsole.MarkupLine("[gray]Loaded equipment sources[/]");
+
+			/// <sumamry>
+			/// Export ship urls
+			/// </summary>
 			if (_downloadShipUrls)
 			{
 				File.WriteAllText($"{_exportFolder}shipUrls.json", JsonConvert.SerializeObject(shipSources, Formatting.Indented));
@@ -179,6 +194,15 @@ namespace AzurLaneWikiScrapersConsole
 					}
 				});
 				AnsiConsole.MarkupLine("[lime]Exported Event Images![/]");
+			}
+
+			if (_downloadEquipmentUrls)
+			{
+				AnsiConsole.Status().Start("Scraping Equipment Urls...", ctx =>
+				{
+					AzurLaneEquipmentSource[] equipmentSources = scrapers.EquipmentUrlScraper.Execute();
+					File.WriteAllText($"{_exportFolder}equipmentUrls.json", JsonConvert.SerializeObject(equipmentSources, Formatting.Indented));
+				});
 			}
 		}
 	}

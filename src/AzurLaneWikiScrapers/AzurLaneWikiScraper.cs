@@ -29,5 +29,11 @@ namespace AzurLaneWikiScrapers
 		/// Scraper used for retrieving event images
 		/// </summary>
 		public Scrapers.EventImagesScraper EventImagesScraper = new Scrapers.EventImagesScraper();
+
+		/// <summary>
+		/// Scraper used for retrieving equipment
+		/// </summary>
+		/// <returns></returns>
+		public Scrapers.EquipmentUrlScraper EquipmentUrlScraper = new Scrapers.EquipmentUrlScraper();
 	}
 }
