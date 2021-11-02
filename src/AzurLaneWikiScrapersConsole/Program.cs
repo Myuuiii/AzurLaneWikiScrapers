@@ -196,6 +196,9 @@ namespace AzurLaneWikiScrapersConsole
 				AnsiConsole.MarkupLine("[lime]Exported Event Images![/]");
 			}
 
+			/// <summary>
+			/// Export equipment urls
+			/// </summary>
 			if (_downloadEquipmentUrls)
 			{
 				AnsiConsole.Status().Start("Scraping Equipment Urls...", ctx =>
