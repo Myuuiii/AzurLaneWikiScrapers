@@ -18,10 +18,8 @@ namespace AzurLaneWikiScrapersConsole
 		private static bool _downloadShipData = false;
 		private static bool _downloadShipImages = false;
 		private static bool _downloadShipUrls = false;
-
 		private static bool _downloadEventsData = false;
 		private static bool _downloadEventsImages = false;
-
 		private static bool _downloadEquipmentUrls = false;
 
 		public static List<AzurLaneShip> ships = new List<AzurLaneShip>();
