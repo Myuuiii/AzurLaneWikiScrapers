@@ -21,8 +21,10 @@ namespace AzurLaneWikiScrapersConsole
 		private static bool _downloadEventsData = false;
 		private static bool _downloadEventsImages = false;
 		private static bool _downloadEquipmentUrls = false;
+		private static bool _downloadEquipmentData = false;
 
 		public static List<AzurLaneShip> ships = new List<AzurLaneShip>();
+		public static AzurLaneEquipmentCollection equipment = new AzurLaneEquipmentCollection();
 
 		static void Main(string[] args)
 		{
@@ -51,12 +53,13 @@ namespace AzurLaneWikiScrapersConsole
 				if (args.Contains("--events-data")) _downloadEventsData = true;
 				if (args.Contains("--events-images")) _downloadEventsImages = true;
 
+				if (args.Contains("--equipment-data")) _downloadEquipmentData = true;
 				if (args.Contains("--equipment-urls")) _downloadEquipmentUrls = true;
 
 				// Section options
 				if (args.Contains("--ships")) _downloadShipData = _downloadShipImages = _downloadShipUrls = true;
 				if (args.Contains("--events")) _downloadEventsData = _downloadEventsImages = true;
-				if (args.Contains("--equipment")) _downloadEquipmentUrls = true;
+				if (args.Contains("--equipment")) _downloadEquipmentUrls = _downloadEquipmentData = true;
 
 				// All / All - Excluded options
 				if (args.Contains("--all"))
@@ -69,6 +72,7 @@ namespace AzurLaneWikiScrapersConsole
 					_downloadEventsImages = true;
 
 					_downloadEquipmentUrls = true;
+					_downloadEquipmentData = true;
 				}
 				if (args.Contains("--all-noimg"))
 				{
@@ -204,6 +208,30 @@ namespace AzurLaneWikiScrapersConsole
 					AzurLaneEquipmentSource[] equipmentSources = scrapers.EquipmentUrlScraper.Execute();
 					File.WriteAllText($"{_exportFolder}equipmentUrls.json", JsonConvert.SerializeObject(equipmentSources, Formatting.Indented));
 				});
+				AnsiConsole.MarkupLine("[lime]Exported Equipment Urls![/]");
+			}
+
+			/// <summary>
+			/// Export equipment data
+			/// </summary>
+			if (_downloadEquipmentData)
+			{
+				AnsiConsole.Status().Start("Scraping Equipment Data...", ctx =>
+				{
+					currentItem = 1;
+					foreach (AzurLaneEquipmentSource source in equipmentSources)
+					{
+						ctx.Status("Scraping equipment data: " + currentItem + "/" + shipSources.Length + $" ([gray]{source.Name}[/])");
+						try
+						{
+							equipment = scrapers.EquipmentDataScraper.Execute(equipment, source);
+						}
+						catch { }
+						currentItem++;
+					}
+					File.WriteAllText($"{_exportFolder}equipment.json", JsonConvert.SerializeObject(equipment, Formatting.Indented));
+				});
+				AnsiConsole.MarkupLine("[lime]Exported Equipment Data![/]");
 			}
 		}
 	}

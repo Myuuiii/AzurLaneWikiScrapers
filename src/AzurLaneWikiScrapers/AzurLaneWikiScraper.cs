@@ -31,9 +31,15 @@ namespace AzurLaneWikiScrapers
 		public Scrapers.EventImagesScraper EventImagesScraper = new Scrapers.EventImagesScraper();
 
 		/// <summary>
-		/// Scraper used for retrieving equipment
+		/// Scraper used for retrieving equipment urls
 		/// </summary>
 		/// <returns></returns>
 		public Scrapers.EquipmentUrlScraper EquipmentUrlScraper = new Scrapers.EquipmentUrlScraper();
+
+		/// <summary>
+		/// Scraper used for retrieving equipment data
+		/// </summary>
+		/// <returns></returns>
+		public Scrapers.EquipmentDataScraper EquipmentDataScraper = new Scrapers.EquipmentDataScraper();
 	}
 }
