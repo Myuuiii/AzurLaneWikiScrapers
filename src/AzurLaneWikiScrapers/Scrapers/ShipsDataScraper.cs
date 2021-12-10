@@ -197,7 +197,7 @@ namespace AzurLaneWikiScrapers.Scrapers
 
 					skins.Add(skin);
 				}
-				ship.Skins = skins.ToArray();
+				ship.Skins = skins;
 			}
 
 			/// <summary>
@@ -232,7 +232,7 @@ namespace AzurLaneWikiScrapers.Scrapers
 					}
 				}
 				catch { }
-				ship.GalleryItems = galleryItems.ToArray();
+				ship.GalleryItems = galleryItems;
 			}
 
 
@@ -302,8 +302,8 @@ namespace AzurLaneWikiScrapers.Scrapers
 				}
 			}
 
-			ship.LimitBreaks = limitBreaks.ToArray();
-			ship.Skills = skills.ToArray();
+			ship.LimitBreaks = limitBreaks;
+			ship.Skills = skills;
 
 
 			/// <summary>
@@ -439,7 +439,7 @@ namespace AzurLaneWikiScrapers.Scrapers
 						}
 					}
 				}
-				ship.Quotes = quotes.ToArray();
+				ship.Quotes = quotes;
 			}
 
 			/// <summary>
@@ -479,7 +479,7 @@ namespace AzurLaneWikiScrapers.Scrapers
 				}
 				gear.Add(slot);
 			}
-			ship.EquippableSlots = gear.ToArray();
+			ship.EquippableSlots = gear;
 
 			return ship;
 		}

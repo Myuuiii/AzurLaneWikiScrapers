@@ -1,9 +1,12 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using AzurLaneWikiScrapers.Enums;
 
 namespace AzurLaneWikiScrapers.Models
 {
 	public class AzurLaneShip
 	{
+		[Key]
 		public string Id { get; set; }
 
 		public string Name { get; set; }
@@ -13,12 +16,12 @@ namespace AzurLaneWikiScrapers.Models
 		public AzurLaneHull Hull { get; set; }
 
 		public string ThumbnailUrl { get; set; }
-		public AzurLaneShipSkin[] Skins { get; set; }
-		public AzurLaneShipSkill[] Skills { get; set; }
-		public AzurLaneShipLimitBreak[] LimitBreaks { get; set; }
-		public AzurLaneShipGalleryItem[] GalleryItems { get; set; }
-		public AzurLaneShipEquippableSlot[] EquippableSlots { get; set; }
-		public AzurLaneShipQuote[] Quotes { get; set; }
+		public List<AzurLaneShipSkin> Skins { get; set; }
+		public List<AzurLaneShipSkill> Skills { get; set; }
+		public List<AzurLaneShipLimitBreak> LimitBreaks { get; set; }
+		public List<AzurLaneShipGalleryItem> GalleryItems { get; set; }
+		public List<AzurLaneShipEquippableSlot> EquippableSlots { get; set; }
+		public List<AzurLaneShipQuote> Quotes { get; set; }
 
 		public AzurLaneShipStats BaseStats { get; set; }
 		public AzurLaneShipStats Level100Stats { get; set; }

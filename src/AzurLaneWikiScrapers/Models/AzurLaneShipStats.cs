@@ -1,9 +1,14 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using AzurLaneWikiScrapers.Enums;
 
 namespace AzurLaneWikiScrapers.Models
 {
 	public class AzurLaneShipStats
 	{
+		[JsonIgnore, Key]
+		public Guid Id { get; set; }
 		public int Luck { get; set; }
 		public AzurLaneArmor Armor { get; set; }
 		public int Speed { get; set; }
