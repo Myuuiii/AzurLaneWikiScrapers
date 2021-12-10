@@ -190,7 +190,10 @@ namespace AzurLaneWikiScrapers.Scrapers
 					HtmlNode[] tablevalues = skintableDescendants.Descendants("td").ToArray();
 
 					skin.ObtainedFrom = tablevalues[0].InnerText;
-					if (tablevalues[1].InnerHtml == "Yes") skin.IsLive2D = true;
+					if (tablevalues.Length == 2)
+					{
+						if (tablevalues[1].InnerHtml == "Yes") skin.IsLive2D = true;
+					}
 
 					skins.Add(skin);
 				}

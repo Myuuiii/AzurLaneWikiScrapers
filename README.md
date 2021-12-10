@@ -8,9 +8,8 @@
 </a>
 
 # Functions to be implemented before release
+
 - [x] Download all ship data
 - [x] Download all ship images
 - [x] Download all event data
 - [x] Download all event images
-- [ ] (In Progress) Download all equipment data
-- [ ] (In Progress) Download all equipment images

@@ -24,7 +24,6 @@ namespace AzurLaneWikiScrapersConsole
 		private static bool _downloadEquipmentData = false;
 
 		public static List<AzurLaneShip> ships = new List<AzurLaneShip>();
-		public static AzurLaneEquipmentCollection equipment = new AzurLaneEquipmentCollection();
 
 		static void Main(string[] args)
 		{
@@ -209,29 +208,6 @@ namespace AzurLaneWikiScrapersConsole
 					File.WriteAllText($"{_exportFolder}equipmentUrls.json", JsonConvert.SerializeObject(equipmentSources, Formatting.Indented));
 				});
 				AnsiConsole.MarkupLine("[lime]Exported Equipment Urls![/]");
-			}
-
-			/// <summary>
-			/// Export equipment data
-			/// </summary>
-			if (_downloadEquipmentData)
-			{
-				AnsiConsole.Status().Start("Scraping Equipment Data...", ctx =>
-				{
-					currentItem = 1;
-					foreach (AzurLaneEquipmentSource source in equipmentSources)
-					{
-						ctx.Status("Scraping equipment data: " + currentItem + "/" + shipSources.Length + $" ([gray]{source.Name}[/])");
-						try
-						{
-							equipment = scrapers.EquipmentDataScraper.Execute(equipment, source);
-						}
-						catch { }
-						currentItem++;
-					}
-					File.WriteAllText($"{_exportFolder}equipment.json", JsonConvert.SerializeObject(equipment, Formatting.Indented));
-				});
-				AnsiConsole.MarkupLine("[lime]Exported Equipment Data![/]");
 			}
 		}
 	}
